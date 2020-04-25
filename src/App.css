@@ -3,8 +3,7 @@
 }
 
 .App-logo {
-  height: 40vmin;
-  pointer-events: none;
+  height: 40vmin; pointer-events: none;
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -35,4 +34,56 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.App {
+}
+
+
+.Board {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-content: space-between;
+  width: 325px;
+  height: 325px;
+  margin: 40px auto;
+  background: #efebe9;
+}
+.cell {
+  display: block;
+  width: 25px;
+  height: 25px;
+  font-size: 8px;
+  color: gray;
+  margin: 0;
+  padding: 0;
+}
+.spot {
+  margin: 2px;
+  height: 17px;
+  width: 17px;
+  line-height: 17px;
+  border: solid 2px #a1887f;
+  border-radius: 100%;
+  background: #bcaaa4;
+}
+.spot.green {
+  border-color: #00c853;
+}
+.spot.blue {
+  border-color: #2962ff;
+}
+.spot.yellow {
+  border-color: #ffd600;
+}
+.spot.red {
+  border-color: #d50000;
+}
+
+.piece {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 100%;
 }
