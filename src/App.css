@@ -1,89 +1,193 @@
-.App {
+html {
+  height: 100%;
+  width: 100%;
+  position: fixed;
+}
+
+body {
+  padding: 0;
+  margin: 0;
+  height: 100%;
+  width: 100%;
+}
+
+#lobby-view {
+  padding: 0 !important;
+}
+.hidden {
+  display: none;
+}
+
+.panel {
+  position: absolute;
+  bottom: 0;
+  left: 10px;
+  right: 10px;
+  height: 100px;
+  background: #efebe9;
+  border: solid 5px #a1887f;
+  border-bottom: none;
+  border-radius: 10px 10px 0 0 ;
+}
+
+.CurrentPlayerIndicator {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  opacity: 0.25;
+}
+.CurrentPlayer0 .CurrentPlayerIndicator {
+  bottom: 64%;
+  left: 64%;
+  border-bottom-left-radius: 50%;
+  background: red;
+}
+.CurrentPlayer1 .CurrentPlayerIndicator {
+  left: 64%;
+  top: 64%;
+  border-top-left-radius: 50%;
+  background: blue;
+}
+.CurrentPlayer2 .CurrentPlayerIndicator {
+  right: 64%;
+  top: 64%;
+  border-top-right-radius: 50%;
+  background: yellow;
+}
+.CurrentPlayer3 .CurrentPlayerIndicator {
+  right: 64%;
+  bottom: 64%;
+  border-bottom-right-radius: 50%;
+  background: green;
+}
+
+header.title {
+  color: #c0ca33;
+  font-family: "Permanent Marker", cursive;
+  font-size: 24px;
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin; pointer-events: none;
+.BoardWrapper {
+  position: relative;
+  margin: 80px auto;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.dieRoll {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  height: 40px;
+  width: 40px;
+  margin-top: -20px;
+  margin-left: -20px;
+  font-size: 40px;
+  line-height: 40px;
+  text-align: center;
 }
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.App {
-}
-
 
 .Board {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-content: space-between;
-  width: 325px;
-  height: 325px;
-  margin: 40px auto;
+  overflow: hidden;
   background: #efebe9;
+  border-radius: 40px;
+  min-width: 320px;
+  width: 100%;
+  position: relative;
+  text-align: center;
+  margin: 0 auto;
+  border: solid 10px #a1887f;
 }
-.cell {
-  display: block;
-  width: 25px;
-  height: 25px;
-  font-size: 8px;
-  color: gray;
-  margin: 0;
-  padding: 0;
-}
-.spot {
-  margin: 2px;
-  height: 17px;
-  width: 17px;
-  line-height: 17px;
-  border: solid 2px #a1887f;
+.Cell {
+  position: absolute;
   border-radius: 100%;
+  border: solid 2px #a1887f;
   background: #bcaaa4;
+  height: 20px;
+  width: 20px;
 }
-.spot.green {
-  border-color: #00c853;
-}
-.spot.blue {
-  border-color: #2962ff;
-}
-.spot.yellow {
-  border-color: #ffd600;
-}
-.spot.red {
-  border-color: #d50000;
+.Cell.green { border-color: #00c853; }
+.Cell.red { border-color: #d50000; }
+.Cell.blue { border-color: #2962ff; }
+.Cell.yellow { border-color: #ffab00; }
+.Cell.over,
+.Cell.highlight,
+.Piece.over {
+	box-shadow: 0 0 20px 5px #ff6d00;
 }
 
-.piece {
-  display: block;
-  width: 100%;
-  height: 100%;
-  border-radius: 100%;
+.Label {
+  position: absolute;
+  text-align: center;
+  line-height: 1;
+  font-family: 'Permanent Marker', cursive;
+  width: 40%;
+  height: 10%;
+  line-height: 2;
 }
+.Label0 {
+  transform: rotate(45deg);
+  top: 14%;
+  right: 0%;
+}
+.Label1 {
+  transform: rotate(-45deg);
+  bottom: 14%;
+  right: 0%;
+}
+.Label2 {
+  transform: rotate(45deg);
+  bottom: 14%;
+  left: 0%;
+}
+.Label3 {
+  transform: rotate(-45deg);
+  top: 14%;
+  left: 0%;
+}
+
+.Piece {
+  border-radius: 100%;
+  height: 100%;
+  width: 100%;
+  cursor: not-allowed;
+}
+.Piece.enabled {
+  cursor: pointer;
+}
+.Piece.green { background: #1b5e20; }
+.Piece.yellow { background: #ffab00; }
+.Piece.blue { background: #0d47a1; }
+.Piece.red { background: #b71c1c; }
+
+.Piece.enabled:hover {
+	box-shadow: 0 0 20px 5px #ff6d00;
+}
+
+.controls {
+  padding: 20px;
+}
+.controls .dice-buttons {
+  display: flex;
+	justify-content: space-between;
+}
+.controls .dice-buttons .DiceButton {
+  /* flex-grow: 1; */
+  /* height: 40px; */
+  /* font-size: 40px; */
+  /* line-height: 40px; */
+  background: none;
+  color: inherit;
+	font-size: 2rem;
+	line-height: 2rem;
+	padding: .5rem;
+}
+.controls .dice-buttons .DiceButton svg {
+	vertical-align: middle;
+}
+
+button {
+	border: 0;
+}
+

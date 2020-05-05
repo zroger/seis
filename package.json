@@ -1,24 +1,47 @@
 {
   "name": "seis",
   "version": "0.1.0",
+  "homepage": "https://zroger.com/seis",
   "private": true,
   "dependencies": {
+    "@material-ui/core": "^4.9.12",
+    "@material-ui/icons": "^4.9.1",
+    "@material-ui/styles": "^4.9.10",
     "@reduxjs/toolkit": "^1.3.5",
+    "@rehooks/window-size": "^1.0.2",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
+    "@types/koa": "^2.11.3",
+    "@types/koa-mount": "^4.0.0",
+    "@types/koa-static": "^4.0.1",
+    "@types/react-redux": "^7.1.8",
+    "@types/shortid": "^0.0.29",
+    "boardgame.io": "^0.39.9",
+    "classnames": "^2.2.6",
+    "gh-pages": "^2.2.0",
+    "koa-mount": "^4.0.0",
+    "koa-static": "^5.0.0",
+    "normalize.css": "^8.0.1",
     "react": "^16.13.1",
     "react-dnd": "^10.0.2",
     "react-dnd-html5-backend": "^10.0.2",
+    "react-dnd-touch-backend": "^10.0.2",
     "react-dom": "^16.13.1",
+    "react-icons": "^3.10.0",
     "react-redux": "^7.2.0",
-    "react-scripts": "3.4.1"
+    "react-scripts": "3.4.1",
+    "shortid": "^2.2.15",
+    "typescript": "^3.8.3"
   },
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "build:server": "tsc server.ts -outDir dist/ -esModuleInterop --jsx react",
+    "run:server": "node dist/server.js",
+    "test": "react-scripts test"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -34,5 +57,10 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "ts-loader": "^7.0.2",
+    "tslint": "^6.1.2",
+    "tslint-react": "^5.0.0"
   }
 }
