@@ -37,11 +37,13 @@
   "scripts": {
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
-    "start": "react-scripts start",
+    "start": "node dist/server.js",
+    "start:client": "react-scripts start",
     "build": "react-scripts build",
     "build:server": "tsc server.ts -outDir dist/ -esModuleInterop --jsx react",
     "run:server": "node dist/server.js",
-    "test": "react-scripts test"
+    "test": "react-scripts test",
+    "postinstall": "npm run build:server"
   },
   "eslintConfig": {
     "extends": "react-app"
