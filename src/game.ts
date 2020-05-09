@@ -1,5 +1,7 @@
-import { INVALID_MOVE } from 'boardgame.io/core';
 import { Game, Ctx } from 'boardgame.io';
+import { INVALID_MOVE } from 'boardgame.io/core';
+import { PluginPlayer } from 'boardgame.io/plugins';
+
 import { DiceValue } from './constants';
 
 export interface IPiece {
@@ -201,6 +203,13 @@ const SeisGame: Game<IG> = {
   },
   turn: {
   },
+  plugins: [
+    PluginPlayer({
+      setup: (playerID: string) => ({
+        name: `Player ${playerID}`,
+      }),
+    }),
+  ],
 };
 
 export default SeisGame;
