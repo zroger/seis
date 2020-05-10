@@ -12,6 +12,7 @@
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
+    "@types/invariant": "^2.2.32",
     "@types/koa": "^2.11.3",
     "@types/koa-mount": "^4.0.0",
     "@types/koa-static": "^4.0.1",
@@ -20,6 +21,7 @@
     "boardgame.io": "^0.39.9",
     "classnames": "^2.2.6",
     "gh-pages": "^2.2.0",
+    "invariant": "^2.2.4",
     "koa-mount": "^4.0.0",
     "koa-static": "^5.0.0",
     "normalize.css": "^8.0.1",
@@ -32,6 +34,7 @@
     "react-redux": "^7.2.0",
     "react-scripts": "3.4.1",
     "shortid": "^2.2.15",
+    "swr": "^0.2.0",
     "typescript": "^3.8.3"
   },
   "scripts": {
@@ -40,7 +43,7 @@
     "start": "node dist/server.js",
     "start:client": "react-scripts start",
     "build": "react-scripts build",
-    "build:server": "tsc server.ts -outDir dist/ -esModuleInterop --jsx react",
+    "build:server": "tsc server.ts -outDir dist/ -t es5 -esModuleInterop --jsx react",
     "run:server": "node dist/server.js",
     "test": "react-scripts test",
     "postinstall": "npm run build:server"
@@ -62,7 +65,6 @@
   },
   "devDependencies": {
     "ts-loader": "^7.0.2",
-    "tslint": "^6.1.2",
     "tslint-react": "^5.0.0"
   }
 }

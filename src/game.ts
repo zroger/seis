@@ -1,6 +1,6 @@
-import { Game, Ctx } from 'boardgame.io';
 import { INVALID_MOVE } from 'boardgame.io/core';
-import { PluginPlayer } from 'boardgame.io/plugins';
+import { Game, Ctx } from 'boardgame.io';
+import invariant from 'invariant';
 
 import { DiceValue } from './constants';
 
@@ -21,6 +21,110 @@ export interface IG {
   pieces: IPiece[],
   players: IPlayer[],
   dieRoll?: number,
+}
+
+class Node {
+  player: number;
+  index: number;
+  boardSize: number;
+
+  constructor(player: number, index: number, boardSize: number = 4) {
+    this.player = player;
+    this.index = index;
+    this.boardSize = boardSize;
+  }
+
+  next(player: number): Node|undefined {
+    return;
+  }
+
+  toBoardPosition(): number {
+    return -1;
+  }
+
+  get key(): string {
+    return "X" + this.player + this.index.toString(16)
+  }
+}
+
+function BuildNode(position: number, boardSize: number): Node {
+  invariant(position >= 0, "Invalid position")
+  invariant(position < boardSize * 20, "Invalid position")
+  return (
+    position >= 16 * boardSize ? (
+      new StartNode(
+        Math.floor((position - (16 * boardSize)) / 4),
+        ((position - (16 * boardSize)) % 4),
+        boardSize,
+      )
+    ) : (
+      position >= 12 * boardSize ? (
+        new HomeNode(
+          Math.floor((position - (12 * boardSize)) / 4),
+          ((position - (12 * boardSize)) % 4),
+          boardSize,
+        )
+      ) : (
+        new CircuitNode(
+          Math.floor(position / 12),
+          position % 12,
+          boardSize,
+        )
+      )
+    )
+  )
+}
+
+class StartNode extends Node {
+  next(player: number): Node|undefined {
+    return new CircuitNode(this.player, 0, this.boardSize);
+  }
+
+  toBoardPosition(): number {
+    return (16 * this.boardSize) + (4 * this.player) + this.index;
+  }
+
+  get key(): string {
+    return "S" + this.player + this.index.toString(16).toUpperCase()
+  }
+}
+
+
+class CircuitNode extends Node {
+  next(player: number): Node|undefined {
+    if (this.index < 11) {
+      return new CircuitNode(this.player, this.index + 1, this.boardSize);
+    }
+    const nextPlayer = (this.player + 1) % this.boardSize;
+    if (nextPlayer === player) {
+      return new HomeNode(nextPlayer, 0, this.boardSize);
+    }
+    return new CircuitNode(nextPlayer, 0, this.boardSize);
+  }
+
+  toBoardPosition(): number {
+    return (12 * this.player) + this.index;
+  }
+
+  get key(): string {
+    return "C" + this.player + this.index.toString(16).toUpperCase()
+  }
+}
+
+class HomeNode extends Node {
+  next(player: number): Node|undefined {
+    if (this.index < 3) {
+      return new HomeNode(this.player, this.index + 1, this.boardSize)
+    }
+  }
+
+  toBoardPosition(): number {
+    return (12 * this.boardSize) + (4 * this.player) + this.index;
+  }
+
+  get key(): string {
+    return "H" + this.player + this.index.toString(16).toUpperCase()
+  }
 }
 
 const INITIAL_STATE: IG = {
@@ -118,16 +222,60 @@ export function getValidMoves(G: IG, ctx: Ctx): IPiece[] {
     piece => piece.playerId === ctx.currentPlayer
   ).map(
     piece => {
-      const pos = getNextPosition(G, ctx, piece);
-      if (piece.position === pos) {
-        return piece;
+      const nextPos = getNextPosition(G, ctx, piece);
+      if (isMoveValid(G, ctx, piece, nextPos)) {
+        return {...piece, position: nextPos}
       }
-      return {...piece, position: pos}
+      return piece;
     }
   ).filter(
     piece => G.pieces.indexOf(piece) === -1
   );
 }
+
+
+/**
+ *
+ */
+function isMoveValid(G: IG, ctx: Ctx, piece: IPiece, nextPos: number): boolean {
+  // Couldn't calculate next position.
+  if (piece.position === nextPos) {
+    return false;
+  }
+
+  const boardSize = 4;
+
+  // Pieces in start positions require a 1 or a 6 to get out.
+  if (piece.position >= (16 * boardSize) && ![1, 6].includes(G.dieRoll as number)) {
+    return false;
+  }
+
+  const skipped = G.pieces.some(p => (
+    (p.playerId === piece.playerId) &&
+    (piece.position < p.position) &&
+    (p.position < nextPos)
+  ))
+
+  // Can't skip your own piece.
+  if (skipped) {
+    return false;
+  }
+
+  const occupied = G.pieces.find(p => (nextPos === p.position))
+
+  // Skip if next position is occupied by own piece.
+  if (occupied?.playerId === piece.playerId) {
+    return false;
+  }
+
+  // Skip if next position is occupied and safe.
+  if (occupied && occupied.position % 12 === 5) {
+    return false;
+  }
+
+  return true;
+}
+
 
 /**
  * Get the next position for given piece.
@@ -141,25 +289,13 @@ function getNextPosition(G: IG, ctx: Ctx, piece: IPiece): number {
   const boardSize = 4;
   const player = getCurrentPlayer(G, ctx);
 
-  // offset is where the player starts from.
-  const offset = (player.position * 12)
-
-  // Starting positions are indexed after everything else,
-  // so (12 common cells + 4 home cells) * board_size.
-  if (piece.position >= 16 * boardSize) {
-    if (G.dieRoll === 1 || G.dieRoll === 6) {
-      return offset - 1 + G.dieRoll;
+  let node: Node|undefined = BuildNode(piece.position, boardSize)
+  for (let i=0; i<G.dieRoll; i++) {
+    if (node) {
+      node = node.next(player.position)
     }
-    return piece.position;
   }
-
-  const base = 12 * boardSize;
-  const relPos = (base + piece.position - offset) % base;
-  const relDest = relPos + G.dieRoll;
-  if (relDest >= base) {
-    return (player.position * boardSize) + relDest
-  }
-  return (relDest + offset) % base
+  return node ? node.toBoardPosition() : piece.position;
 }
 
 /**
@@ -170,8 +306,23 @@ function movePiece(G: IG, ctx: Ctx, pieceId: number): IG | string {
     return INVALID_MOVE;
   }
 
+  if (pieceId === -1) {
+    if (!ctx.events?.endTurn) {
+      throw new Error("ctx.events.endTurn is undefined")
+    }
+    ctx.events.endTurn();
+    return {
+      ...G,
+      dieRoll: undefined,
+    }
+  }
+
   const piece = getPieceById(G, ctx, pieceId);
   const nextPos = getNextPosition(G, ctx, piece);
+
+  if (!isMoveValid(G, ctx, piece, nextPos)) {
+    return INVALID_MOVE
+  }
 
   if (!ctx.events || !ctx.events.endTurn) {
     throw new Error("ctx.events is undefined");
@@ -185,14 +336,30 @@ function movePiece(G: IG, ctx: Ctx, pieceId: number): IG | string {
     ctx.events.endTurn();
   }
 
+  const occupied = G.pieces.find(p => (nextPos === p.position))
+
   return {
     ...G,
     dieRoll: undefined,
     pieces: G.pieces.map(p => (
-      p === piece  ? {...p, position: nextPos} : p
+      p === piece ? {...p, position: nextPos} : ( p === occupied ? (
+        {...p, position: capture(G, occupied) }
+      ) : p)
     )),
   }
 }
+
+function capture(G: IG, piece: IPiece) {
+  const player = getPlayerById(G, piece.playerId)
+  for (let i=0; i<4; i++) {
+    const node = new StartNode(player.position, i, 4);
+    if (!G.pieces.find(p => p.position === node.toBoardPosition())) {
+      return node.toBoardPosition();
+    }
+  }
+  throw new Error("capture error")
+}
+
 
 const SeisGame: Game<IG> = {
   name: "seis",
@@ -203,13 +370,23 @@ const SeisGame: Game<IG> = {
   },
   turn: {
   },
-  plugins: [
-    PluginPlayer({
-      setup: (playerID: string) => ({
-        name: `Player ${playerID}`,
-      }),
-    }),
-  ],
 };
 
 export default SeisGame;
+
+
+export function mapNodes<T>(boardSize: number, callback: (node: Node) => T): T[] {
+  let nodes = [];
+  for (let p=0; p<4; p++) {
+    for (let i=0; i<4; i++) {
+      nodes.push(new StartNode(p, i, boardSize));
+    }
+    for (let i=0; i<12; i++) {
+      nodes.push(new CircuitNode(p, i, boardSize));
+    }
+    for (let i=0; i<4; i++) {
+      nodes.push(new HomeNode(p, i, boardSize));
+    }
+  }
+  return nodes.map(callback);
+};
