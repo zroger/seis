@@ -1712,6 +1712,11 @@
     "@types/koa-compose" "*"
     "@types/node" "*"
 
+"@types/lodash@^4.14.150":
+  version "4.14.150"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.150.tgz#649fe44684c3f1fcb6164d943c5a61977e8cf0bd"
+  integrity sha512-kMNLM5JBcasgYscD9x/Gvr6lTAv2NVgsKtet/hm93qMyf/D1pt+7jeEZklKJKxMVmXjxbRVQQGfqDSfipYCO6w==
+
 "@types/mime@*":
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/@types/mime/-/mime-2.0.1.tgz#dc488842312a7f075149312905b5e3c0b054c79d"
@@ -2688,10 +2693,10 @@ bn.js@^4.0.0, bn.js@^4.1.0, bn.js@^4.1.1, bn.js@^4.4.0:
   resolved "https://registry.yarnpkg.com/bn.js/-/bn.js-4.11.8.tgz#2cde09eb5ee341f484746bb0309b3253b1b1442f"
   integrity sha512-ItfYfPLkWHUjckQCk8xC+LwxgK8NYcXywGigJgSwOP8Y2iyWT4f2vsZnoOXTTbo+o5yXmIUJ4gn5538SO5S3gA==
 
-boardgame.io@^0.39.9:
-  version "0.39.9"
-  resolved "https://registry.yarnpkg.com/boardgame.io/-/boardgame.io-0.39.9.tgz#9a3037353c9b901f380d19dfd2cbaf38b8347239"
-  integrity sha512-Yx+XN07rhy/gCtFl7fSGuQKb201XtsNDEE3BoxSNpdO2Wt8DBjob4x3lcnUdR85QtARpkNlw3Xx8Rq+I3tTGmQ==
+boardgame.io@^0.39.10:
+  version "0.39.10"
+  resolved "https://registry.yarnpkg.com/boardgame.io/-/boardgame.io-0.39.10.tgz#c9f392b918d491c293f450642b218e96eed12798"
+  integrity sha512-ZVZHz5QeSbwNmYmuvWth1IZ+8mBrLjlf5Qx2J+93+9wLElJVJ3R2JnZ3aiIfyANjXchYcy37/Y271J9Z+H8oHQ==
   dependencies:
     "@koa/cors" "^2.2.1"
     flatted "^0.2.3"
@@ -9163,6 +9168,11 @@ prepend-http@^1.0.0:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/prepend-http/-/prepend-http-1.0.4.tgz#d4f4562b0ce3696e41ac52d0e002e57a635dc6dc"
   integrity sha1-1PRWKwzjaW5BrFLQ4ALlemNdxtw=
+
+prettier@^2.0.5:
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.0.5.tgz#d6d56282455243f2f92cc1716692c08aa31522d4"
+  integrity sha512-7PtVymN48hGcO4fGjybyBSIWDsLU4H4XlvOHfq91pz9kkGlonzwTfYkaIEwiRg/dAJF9YlbsduBAgtYLi+8cFg==
 
 pretty-bytes@^5.1.0:
   version "5.3.0"
