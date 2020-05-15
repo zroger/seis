@@ -1,21 +1,110 @@
+import _ from 'lodash';
 import React, { FunctionComponent, useState } from 'react';
 import { Ctx } from 'boardgame.io';
-import useWindowSize from '@rehooks/window-size'
 
-import { BoardLayout4, Colors } from '../constants';
 import {
   IG,
-  IPiece,
   getCurrentPlayer,
-  getPlayerById,
+  getPlayerBySeat,
   getValidMoves,
+  BoardPositions,
 } from '../game';
 
-import ActionPanel from './ActionPanel';
-import Cell from './Cell';
-import DiceButton from './DiceButton';
+import DiceControls from './DiceControls';
 import DiceIcon from './DiceIcon';
 import Piece from './Piece';
+
+import Button from '@material-ui/core/Button';
+import Container from '@material-ui/core/Container';
+import { makeStyles } from '@material-ui/core/styles';
+import Typography from '@material-ui/core/Typography';
+
+const useStyles = makeStyles((theme) => ({
+  loading: {
+    padding: theme.spacing(2),
+  },
+  diceContainer: {
+    display: 'flex',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    width: '80vw',
+  },
+  diceRandom: {
+    flexBasis: '40%',
+    display: 'block',
+    margin: 0,
+    padding: 0,
+    width: '20vw',
+    height: '20vw',
+    fontSize: '20vw',
+  },
+  diceWrapper: {
+    flexBasis: '60%',
+    width: '40vw',
+    height: '20vw',
+    display: 'flex',
+    flexFlow: 'row wrap',
+    alignItems: 'center',
+    justifyContent: 'space-evenly',
+  },
+  diceButton: {
+    flexBasis: '33%',
+    flexGrow: 0,
+    display: 'block',
+    margin: 0,
+    padding: 0,
+    width: '10vw',
+    height: '10vw',
+    fontSize: '8vw',
+  },
+
+
+  main: {
+    height: '100vh',
+    width: '100vw',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  board: {
+    position: 'relative',
+    display: 'flex',
+  },
+  controls: {
+    position: 'relative',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  '@media (orientation: portrait)': {
+    main: {
+      flexFlow: 'column nowrap',
+    },
+    board: {
+      height: 'min(60vh, 100vw)',
+      width: 'min(60vh, 100vw)',
+    },
+    controls: {
+      height: '40vh',
+      width: '100vw',
+    },
+  },
+
+  '@media (orientation: landscape)': {
+    main: {
+      flexFlow: 'row nowrap',
+    },
+    board: {
+      height: 'min(60vw, 100vh)',
+      width: 'min(60vw, 100vh)',
+    },
+    controls: {
+      height: '100vh',
+      width: '40vw',
+    },
+  }
+}));
 
 interface Props {
   G: IG,
@@ -23,7 +112,6 @@ interface Props {
   moves: any,
   playerID?: string,
   isActive: boolean,
-  gameMetadata: any,
 }
 
 
@@ -33,126 +121,86 @@ const Board: FunctionComponent<Props> = ({
   moves,
   playerID,
   isActive,
-  gameMetadata,
 }) => {
-  const [activePiece, setActivePiece] = useState<IPiece | undefined>();
-  const {innerHeight, innerWidth} = useWindowSize();
-  const size = Math.min(innerHeight, innerWidth) - 20;
-  /* const size = 410; */
-  const scale = size / 410;
+  const classes = useStyles();
+
+  // The position of the currently hightlighed piece.
+  const [activePiece, setActivePiece] = useState<string|undefined>();
 
   const currentPlayer = getCurrentPlayer(G, ctx);
 
-  const validMoves: IPiece[] = G.dieRoll ? getValidMoves(G, ctx) : [];
-  const activeMove = validMoves.find(m => activePiece && m.playerId === activePiece.playerId && m.id === activePiece.id);
+  const validMoves = getValidMoves(G, ctx);
+  const activeMove = validMoves.find(m => activePiece && activePiece === m.from);
 
-  const selectPiece = (piece: IPiece) => {
-    if (validMoves.find(m => m.playerId === piece.playerId && m.id === piece.id)) {
-      moves.movePiece(piece.id);
+  const selectPiece = (position: string) => {
+    if (validMoves.find(m => m.from === position)) {
+      moves.movePiece(position);
       setActivePiece(undefined);
     }
   };
 
-  const activatePiece = (piece: IPiece) => {
-    /* const move = validMoves.find(m => m.playerId === piece.playerId && m.id === piece.id); */
-    setActivePiece(piece);
+  const activatePiece = (position: string) => {
+    setActivePiece(position);
   };
 
-  const deactivatePiece = (piece: IPiece) => {
+  const deactivatePiece = (position: string) => {
     setActivePiece(undefined);
   };
 
   const skip = () => {
     // TODO: there should probably be a specific game state move for this.
-    moves.movePiece(0);
+    moves.movePiece("");
   };
 
   return (
-    <div className={`BoardWrapper CurrentPlayer${currentPlayer.position}`}>
-      {!playerID && (
-        <div>you're a a spectator</div>
-      )}
-      <div className="Board" style={{width: size, height: size}}>
-        <div className="CurrentPlayerIndicator" />
-        {
-          gameMetadata.map(({id, name} : {id: number, name: string|undefined}) => (
-            <div key={id} className={`Label Label${id}`}>
-              {name || ""}
+    <div className={`${classes.main} game-view current-player-${currentPlayer.seat}`}>
+      <div className={`${classes.board} board4`}>
+        {BoardPositions().map( pos => {
+          const piece = G.pieces.find(p => p.position === pos);
+          const highlight = activeMove?.to === pos;
+          return (
+            <div key={pos} className={`cell ${pos}`}>
+              <div className={`spot ${highlight ? "highlight" : ""}`}>
+                { piece && (
+                  <Piece
+                    G={G} ctx={ctx}
+                    player={getPlayerBySeat(G, piece.seat)}
+                    position={pos}
+                    onSelect={isActive ? selectPiece : undefined}
+                    onActivate={isActive ? activatePiece : undefined}
+                    onDeactivate={isActive ? deactivatePiece : undefined}
+                    enabled={isActive && validMoves.some(_.matches({from: pos}))}
+                  />
+                )}
+              </div>
             </div>
-          ))
-        }
-        {
-          BoardLayout4.cells.map(
-            ([x, y], i) => {
-              const piece = G.pieces.find(({position}) => position === i);
-              const color = (
-                i >= (BoardLayout4.players * 12) ?
-                Colors[Math.floor(i / BoardLayout4.players) % BoardLayout4.players] :
-                ''
-              )
-              return (
-                <Cell
-                  key={i}
-                  x={x * scale}
-                  y={y * scale}
-                  h={20 * scale}
-                  color={color}
-                  highlight={activeMove && activeMove.position === i}
-                  // selected={selected && selected.cell === i}
-                >
-                  {piece && (
-                    <Piece
-                      G={G} ctx={ctx}
-                      player={getPlayerById(G, piece.playerId)}
-                      piece={piece}
-                      onSelect={selectPiece}
-                      onActivate={activatePiece}
-                      onDeactivate={deactivatePiece}
-                      enabled={validMoves.some(p => p.playerId === piece.playerId && p.id === piece.id)}
-                    />
-                  )}
-                </Cell>
-              )
-            }
-          )
-        }
-      </div>
-      <div className="controls">
-        <div>you are {playerID}</div>
-        { isActive ? (
-          <div>
-            { !G.dieRoll && (
-              <ActionPanel title={`Up now: ${currentPlayer.name}`} help="Roll the die">
-                <div className="dice-buttons" style={{color: currentPlayer.color}}>
-                  <DiceButton onRoll={moves.rollDie} />
-                  <DiceButton value={1} onRoll={moves.rollDie} />
-                  <DiceButton value={2} onRoll={moves.rollDie} />
-                  <DiceButton value={3} onRoll={moves.rollDie} />
-                  <DiceButton value={4} onRoll={moves.rollDie} />
-                  <DiceButton value={5} onRoll={moves.rollDie} />
-                  <DiceButton value={6} onRoll={moves.rollDie} />
-                </div>
-              </ActionPanel>
-            )}
-            { G.dieRoll && validMoves.length > 0 && (
-              <ActionPanel title={`Up now: ${currentPlayer.name}`} help="Make your move">
-                <div className="dice-buttons" style={{color: currentPlayer.color}}>
-                  <DiceIcon value={G.dieRoll} />
-                </div>
-              </ActionPanel>
-            )}
-            { G.dieRoll && validMoves.length === 0 && (
-              <ActionPanel title={`Up now: ${currentPlayer.name}`} help="No moves">
-                <button onClick={skip}>Skip</button>
-              </ActionPanel>
-            )}
+          );
+        })}
+        { G.dieRoll && (
+          <div
+            className={`dice-view dice-view-${currentPlayer.seat}`}
+            style={{transform: `rotate(${((G.dieRoll + ctx.turn) % 18) * 10}deg)`}} >
+            <DiceIcon value={G.dieRoll} />
           </div>
-        ) : (
-          <ActionPanel title={`Up now: ${currentPlayer.name}`} help="" />
         )}
       </div>
+
+      <Container className={classes.controls}>
+        {!!(isActive && G.dieRoll && validMoves.length === 0) && (
+          <div>
+            <Typography>No moves</Typography>
+            <div>
+              <Button variant="contained" onClick={skip}>Continue</Button>
+            </div>
+          </div>
+        )}
+
+        {isActive && !G.dieRoll && (
+          <DiceControls onRoll={moves.rollDie} />
+        )}
+      </Container>
     </div>
-  )
-}
+  );
+};
 
 export default Board;

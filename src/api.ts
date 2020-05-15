@@ -1,4 +1,9 @@
-export const baseUrl = 'http://10.0.1.27:8000';
+// export const baseUrl = 'http://10.0.1.27:8000';
+export const baseUrl = 'https://seis-game.herokuapp.com';
+
+function sleep(ms: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 export async function createRoom(): Promise<IRoom> {
   const resp = await fetch(baseUrl + '/games/seis/create', {
@@ -30,11 +35,13 @@ export async function getRoom(roomID: string): Promise<IRoom> {
   if (!resp.ok) {
     throw new Error(`Room ${roomID} not found`)
   }
+  await sleep(1000);
   const data = await resp.json();
   return data;
 }
 
 export async function joinRoom(roomID: string, playerName: string, playerID: string) {
+  await sleep(1000);
   const resp = await fetch(baseUrl + '/games/seis/' + roomID + '/join', {
     method: 'POST',
     body: JSON.stringify({
@@ -46,6 +53,7 @@ export async function joinRoom(roomID: string, playerName: string, playerID: str
   if (!resp.ok) {
     throw new Error(`Unable to join room ${roomID}`)
   }
+  await sleep(1000);
   const data = await resp.json();
   return data.playerCredentials;
 }

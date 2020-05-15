@@ -1,54 +1,93 @@
-import React from 'react';
-import { Client } from 'boardgame.io/react';
+import React, {
+  FunctionComponent,
+  useEffect,
+  useState,
+} from 'react';
 import { SocketIO } from 'boardgame.io/multiplayer';
-/* import { Lobby } from 'boardgame.io/react'; */
-import Lobby from './components/Lobby';
+import { Client } from 'boardgame.io/react';
+
+import * as api from './api';
+import Game from './game';
+import Board from './components/Board';
+import JoinRoomDialog from './components/JoinRoomDialog';
+import Layout from './components/Layout';
+import Loading from './components/Loading';
+
 import './App.css';
 
-export default Lobby;
+interface IGameProps {
+  gameID: string,
+  playerID?: string,
+  credentials?: string,
+}
 
-/* import 'normalize.css'; */
+const useSessionState = (key: string) => {
+  const [value, setValue] = useState(() => {
+    try {
+      return JSON.parse(sessionStorage.getItem(key) || "null")
+    } catch (error) {
+      return
+    }
+  });
 
-/* import Game from './game'; */
-/* import Board from './components/Board'; */
-/* import LobbyView from './components/LobbyView'; */
+  useEffect(() => {
+    if (value) {
+      sessionStorage.setItem(key, JSON.stringify(value))
+    } else {
+      sessionStorage.removeItem(key)
+    }
+  }, [key, value]);
 
-/* const GameClient = Client({ */
-/*   game: Game, */
-/*   board: Board, */
-/*   numPlayers: 4, */
-/*   multiplayer: SocketIO({ server: '10.0.1.27:8000' }), */
-/* }); */
+  return [value, setValue];
+};
 
-/* function App() { */
-/*   const playerId = window.location.hash.substring(1); */
-/*   return ( */
-/*     <div> */
-/*       <GameClient playerId={playerId} debug={playerId === "0"} /> */
-/*     </div> */
-/*   ) */
-/* }; */
+const OnlineClient = Client({
+  game: Game,
+  board: Board,
+  multiplayer: SocketIO({ server: 'https://seis-game.herokuapp.com' }),
+  loading: Loading,
+});
 
-/* function LobbyRenderer(props: any): any { */
-/*   return <LobbyView {...props} />; */
-/* }; */
+const OfflineClient = Client({
+  game: Game,
+  board: Board,
+});
 
-/* function AppWrapper() { */
-/*   const games = [ */
-/*     { */
-/*       game: Game, */
-/*       board: Board, */
-/*     }, */
-/*   ]; */
-/*   return ( */
-/*     <Lobby */
-/*       gameServer={`http://${window.location.hostname}:8000`} */
-/*       lobbyServer={`http://${window.location.hostname}:8000`} */
-/*       gameComponents={games} */
-/*       renderer={LobbyRenderer} */
-/*     /> */
-/*   ); */
-/* } */
+const App: FunctionComponent = () => {
+  const [gameProps, setGameProps] = useSessionState("game")
+  const [isLoading, setLoading] = useState<boolean>(false)
 
-/* export default AppWrapper; */
+  const debug = window.location.hash.indexOf("debug") > 0;
 
+  useEffect(() => {
+    if (debug) {
+      return;
+    }
+    setLoading(true);
+    (async () => {
+      try {
+        await api.getRoom(gameProps.gameID);
+      } catch (error) {
+        setGameProps(undefined)
+      }
+      setLoading(false);
+    })();
+  }, [debug, gameProps, setGameProps]);
+
+  return (
+    <Layout loading={isLoading}>
+      { debug ? (
+          <OfflineClient debug={false} />
+        ) : (
+          gameProps ? (
+            <OnlineClient {...gameProps} debug={false} />
+          ) : (
+            <JoinRoomDialog open={true} onSubmit={setGameProps} />
+          )
+        )
+      }
+    </Layout>
+  )
+};
+
+export default App;

@@ -1,32 +1,32 @@
+import _ from 'lodash';
 import React, {FunctionComponent} from 'react';
 import { Ctx } from 'boardgame.io';
-import { IG, IPlayer, IPiece } from '../game';
+import { IG, IPlayer } from '../game';
 
 interface Props {
   G: IG,
   ctx: Ctx,
   player: IPlayer,
-  piece: IPiece,
+  position: string,
   enabled?: boolean,
-  onSelect?: (piece: IPiece) => void,
-  onActivate?: (piece: IPiece) => void,
-  onDeactivate?: (piece: IPiece) => void,
+  onSelect?: (position: string) => void,
+  onActivate?: (position: string) => void,
+  onDeactivate?: (position: string) => void,
 }
 
 const Piece: FunctionComponent<Props> = ({
   G,
   ctx,
   player,
-  piece,
+  position,
   enabled,
   onSelect,
   onActivate,
   onDeactivate,
 }) => {
-  const noop = (p: IPiece) => {return};
-  const onClick = () => { (onSelect || noop)(piece); }
-  const onMouseEnter = () => { (onActivate || noop)(piece); }
-  const onMouseLeave = () => { (onDeactivate || noop)(piece); }
+  const onClick = () => { (onSelect || _.noop)(position); }
+  const onMouseEnter = () => { (onActivate || _.noop)(position); }
+  const onMouseLeave = () => { (onDeactivate || _.noop)(position); }
 
   return (
     <div

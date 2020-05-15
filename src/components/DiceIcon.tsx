@@ -1,4 +1,5 @@
 import React, {FunctionComponent} from 'react';
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { IconType} from 'react-icons';
 import {
   GiDiceSixFacesOne,
@@ -21,6 +22,23 @@ const Icons: Record<DiceValue, IconType> = {
   6: GiDiceSixFacesSix,
 }
 
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      userSelect: 'none',
+      width: '1em',
+      height: '1em',
+      display: 'inline-block',
+      fill: 'currentColor',
+      flexShrink: 0,
+      fontSize: 'inherit',
+      transition: theme.transitions.create('fill', {
+	duration: theme.transitions.duration.shorter,
+      }),
+    },
+  }),
+);
+
 interface Props {
   value?: DiceValue,
 }
@@ -29,10 +47,10 @@ const DiceIcon: FunctionComponent<Props> = ({
   value,
 }) => {
   const Component = value ? Icons[value] : RandomIcon;
-  const className = value ? `dice-${value}` : 'dice-random';
+  const classes = useStyles();
 
   return (
-    <Component className={`dice ${className}`} />
+    <Component className={classes.root} />
   );
 };
 
