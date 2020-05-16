@@ -234,6 +234,47 @@ button {
   justify-content: center;
   align-items: center;
 }
+.board4 .S00 .spot,
+.board4 .S01 .spot,
+.board4 .S02 .spot,
+.board4 .S03 .spot,
+.board4 .H00 .spot,
+.board4 .H01 .spot,
+.board4 .H02 .spot,
+.board4 .H03 .spot {
+  border-color: #b71c1c;
+}
+.board4 .S10 .spot,
+.board4 .S11 .spot,
+.board4 .S12 .spot,
+.board4 .S13 .spot,
+.board4 .H10 .spot,
+.board4 .H11 .spot,
+.board4 .H12 .spot,
+.board4 .H13 .spot {
+  border-color: #0d47a1;
+}
+.board4 .S20 .spot,
+.board4 .S21 .spot,
+.board4 .S22 .spot,
+.board4 .S23 .spot,
+.board4 .H20 .spot,
+.board4 .H21 .spot,
+.board4 .H22 .spot,
+.board4 .H23 .spot {
+  border-color: #ffab00;
+}
+.board4 .S30 .spot,
+.board4 .S31 .spot,
+.board4 .S32 .spot,
+.board4 .S33 .spot,
+.board4 .H30 .spot,
+.board4 .H31 .spot,
+.board4 .H32 .spot,
+.board4 .H33 .spot {
+  border-color: #1b5e20;
+}
+
 .board4 .C00 {top: 2.5%; left: 55%; }
 .board4 .C01 {top: 10.0%; left: 55%; }
 .board4 .C02 {top: 17.5%; left: 55%; }

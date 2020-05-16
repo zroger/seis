@@ -44,7 +44,7 @@ const useSessionState = (key: string) => {
 const OnlineClient = Client({
   game: Game,
   board: Board,
-  multiplayer: SocketIO({ server: 'https://seis-game.herokuapp.com' }),
+  multiplayer: SocketIO({ server: api.baseUrl }),
   loading: Loading,
 });
 

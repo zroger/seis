@@ -13,9 +13,9 @@ import {
 import DiceControls from './DiceControls';
 import DiceIcon from './DiceIcon';
 import Piece from './Piece';
+import SeatControls from './SeatControls';
 
 import Button from '@material-ui/core/Button';
-import Container from '@material-ui/core/Container';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 
@@ -77,6 +77,31 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
   },
 
+  name: {
+    position: 'absolute',
+    textAlign: 'center',
+    "&.seat-0": {
+      transform: "rotate(45deg)",
+      bottom: '77.5%',
+      left: '55%',
+    },
+    "&.seat-1": {
+      transform: "rotate(-45deg)",
+      top: '77.5%',
+      left: '55%',
+    },
+    "&.seat-2": {
+      transform: "rotate(45deg)",
+      top: '77.5%',
+      right: '55%',
+    },
+    "&.seat-3": {
+      transform: "rotate(-45deg)",
+      bottom: '77.5%',
+      right: '55%',
+    },
+  },
+
   '@media (orientation: portrait)': {
     main: {
       flexFlow: 'column nowrap',
@@ -88,6 +113,10 @@ const useStyles = makeStyles((theme) => ({
     controls: {
       height: '40vh',
       width: '100vw',
+    },
+    name: {
+      fontSize: 'min(2vh, 3.33vw)',
+      width: 'min(30vh, 50vw)',
     },
   },
 
@@ -103,6 +132,10 @@ const useStyles = makeStyles((theme) => ({
       height: '100vh',
       width: '40vw',
     },
+    name: {
+      fontSize: 'min(3.33vh, 2vw)',
+      width: 'min(50vh, 30vw)',
+    },
   }
 }));
 
@@ -112,6 +145,33 @@ interface Props {
   moves: any,
   playerID?: string,
   isActive: boolean,
+  gameMetadata: {id: number, name?: string}[]
+}
+
+enum ActionState {
+  NONE = 0,
+  CHOOSE_SEAT,
+  PENDING_START,
+  ROLL,
+  MOVE,
+  PENDING_MOVE,
+}
+
+function selectAction(G: IG, ctx: Ctx, playerID: string|undefined, isActive: boolean): ActionState {
+  if (ctx.phase === "setup") {
+    if (!!G.players.find(p => p.id === playerID)) {
+      return ActionState.PENDING_START;
+    }
+    return ActionState.CHOOSE_SEAT;
+  }
+
+  if (ctx.phase === "play" && isActive) {
+    return !!G.dieRoll ? ActionState.MOVE : ActionState.ROLL;
+  } else if (ctx.phase === "play") {
+    return ActionState.PENDING_MOVE;
+  }
+
+  return ActionState.NONE;
 }
 
 
@@ -121,6 +181,7 @@ const Board: FunctionComponent<Props> = ({
   moves,
   playerID,
   isActive,
+  gameMetadata
 }) => {
   const classes = useStyles();
 
@@ -131,6 +192,8 @@ const Board: FunctionComponent<Props> = ({
 
   const validMoves = getValidMoves(G, ctx);
   const activeMove = validMoves.find(m => activePiece && activePiece === m.from);
+
+  const action = selectAction(G, ctx, playerID, isActive);
 
   const selectPiece = (position: string) => {
     if (validMoves.find(m => m.from === position)) {
@@ -152,9 +215,17 @@ const Board: FunctionComponent<Props> = ({
     moves.movePiece("");
   };
 
+  const handleChooseSeat = (seat: number) => {
+    const meta = gameMetadata.find(p => "" + p.id === playerID)
+    moves.ChooseSeat(seat, meta?.name ? meta.name : `Player ${seat + 1}`);
+  }
+
   return (
-    <div className={`${classes.main} game-view current-player-${currentPlayer.seat}`}>
+    <div className={`${classes.main} game-view current-player-${currentPlayer?.seat}`}>
       <div className={`${classes.board} board4`}>
+        {G.players.map ( player => (
+          <div key={player.seat} className={`${classes.name} seat-${player.seat}`}>{player.name}</div>
+        ))}
         {BoardPositions().map( pos => {
           const piece = G.pieces.find(p => p.position === pos);
           const highlight = activeMove?.to === pos;
@@ -178,27 +249,46 @@ const Board: FunctionComponent<Props> = ({
         })}
         { G.dieRoll && (
           <div
-            className={`dice-view dice-view-${currentPlayer.seat}`}
+            className={`dice-view dice-view-${currentPlayer?.seat}`}
             style={{transform: `rotate(${((G.dieRoll + ctx.turn) % 18) * 10}deg)`}} >
             <DiceIcon value={G.dieRoll} />
           </div>
         )}
       </div>
 
-      <Container className={classes.controls}>
-        {!!(isActive && G.dieRoll && validMoves.length === 0) && (
-          <div>
-            <Typography>No moves</Typography>
-            <div>
-              <Button variant="contained" onClick={skip}>Continue</Button>
-            </div>
-          </div>
+      <div className={classes.controls}>
+        {action === ActionState.CHOOSE_SEAT && (
+          <SeatControls onSelect={handleChooseSeat} players={G.players} />
+        )}
+        {action === ActionState.PENDING_START && (
+          <div>Waiting for {ctx.numPlayers - G.players.length} more to join...</div>
         )}
 
-        {isActive && !G.dieRoll && (
+        {action === ActionState.MOVE && (
+          validMoves.length > 0 ? (
+            <div>Make a move...</div>
+          ) : (
+            <div>
+              <Typography>No moves</Typography>
+              <div>
+                <Button variant="contained" onClick={skip}>Continue</Button>
+              </div>
+            </div>
+          )
+        )}
+
+        {action === ActionState.ROLL && (
           <DiceControls onRoll={moves.rollDie} />
         )}
-      </Container>
+
+        {action === ActionState.PENDING_MOVE && (
+          <div>Waiting for <strong>{currentPlayer?.name}</strong> to move...</div>
+        )}
+
+        {action === ActionState.NONE && (
+          <div>lolwut</div>
+        )}
+      </div>
     </div>
   );
 };

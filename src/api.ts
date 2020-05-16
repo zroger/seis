@@ -1,5 +1,9 @@
 // export const baseUrl = 'http://10.0.1.27:8000';
-export const baseUrl = 'https://seis-game.herokuapp.com';
+export const baseUrl = (
+  window.location.hostname === '10.0.1.27' ?
+  'http://10.0.1.27:8000' :
+  'https://seis-game.herokuapp.com'
+)
 
 function sleep(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));

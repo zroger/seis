@@ -1,4 +1,4 @@
-import { INVALID_MOVE } from "boardgame.io/core";
+import { INVALID_MOVE, Stage } from "boardgame.io/core";
 import { Game, Ctx } from "boardgame.io";
 import _ from 'lodash';
 
@@ -24,33 +24,6 @@ export interface IG {
   dieRoll?: number;
 }
 
-const INITIAL_STATE: IG = {
-  pieces: [
-    { seat: 0, position: "S00" },
-    { seat: 0, position: "S01" },
-    { seat: 0, position: "S02" },
-    { seat: 0, position: "S03" },
-    { seat: 1, position: "S10" },
-    { seat: 1, position: "S11" },
-    { seat: 1, position: "S12" },
-    { seat: 1, position: "S13" },
-    { seat: 2, position: "S20" },
-    { seat: 2, position: "S21" },
-    { seat: 2, position: "S22" },
-    { seat: 2, position: "S23" },
-    { seat: 3, position: "S30" },
-    { seat: 3, position: "S31" },
-    { seat: 3, position: "S32" },
-    { seat: 3, position: "S33" },
-  ],
-  players: [
-    { id: "0", seat: 0, name: "Player 1", color: "red" },
-    { id: "1", seat: 1, name: "Player 2", color: "blue" },
-    { id: "2", seat: 2, name: "Player 3", color: "yellow" },
-    { id: "3", seat: 3, name: "Player 4", color: "green" },
-  ],
-};
-
 /**
  * Roll the die. If passed a number 1-6, use that as the value,
  * otherwise, use a random die roll.
@@ -68,10 +41,11 @@ function rollDie(G: IG, ctx: Ctx, value: DiceValue | undefined): IG | string {
 /**
  * Selector to get the current player instance.
  */
-export function getCurrentPlayer(G: IG, ctx: Ctx): IPlayer {
+export function getCurrentPlayer(G: IG, ctx: Ctx): IPlayer|undefined {
   const player = G.players.find((p) => p.id === ctx.currentPlayer);
   if (player === undefined) {
-    throw Error("undefined player");
+    return;
+    // throw Error("undefined player");
   }
   return player;
 }
@@ -168,12 +142,54 @@ function movePiece(G: IG, ctx: Ctx, position: string): IG | string {
   };
 }
 
+/**
+ * Choose the seat for a player.
+ */
+function ChooseSeat(G: IG, ctx: Ctx, seat: number, name: string): string | undefined {
+  if (G.players.some(p => p.seat === seat)) {
+    return INVALID_MOVE;
+  }
+
+  const colors = ["red", "blue", "yellow", "green"];
+  G.players.push({
+    seat,
+    name,
+    id: ctx.playerID as string,
+    color: colors[seat],
+  })
+  G.pieces.push(...(_.range(4).map(i => ({seat, position: `S${seat}${i}`}))))
+}
+
+
 const SeisGame: Game<IG> = {
   name: "seis",
-  setup: (): IG => INITIAL_STATE,
+  // setup: (): IG => INITIAL_STATE,
+  setup: () : IG => ({players: [], pieces: []}),
+  phases: {
+    setup: {
+      turn: {
+        activePlayers: { all: Stage.NULL },
+      },
+      moves: {ChooseSeat},
+      start: true,
+      endIf: (G: IG, ctx: Ctx) => (G.players.length === ctx.numPlayers),
+      next: 'play',
+    },
+    play: {
+      moves: {
+        rollDie,
+        movePiece,
+      },
+      turn: {
+        order: {
+          first: (G: IG, ctx: Ctx) => 0,
+          next: (G: IG, ctx: Ctx) => (ctx.playOrderPos + 1) % ctx.numPlayers,
+          playOrder: (G: IG) => (_.sortBy(G.players, ['seat']).map(p => p.id)),
+        },
+      },
+    },
+  },
   moves: {
-    rollDie,
-    movePiece,
   },
   turn: {},
 };
