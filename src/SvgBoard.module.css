@@ -1,0 +1,74 @@
+.root {
+  background: rgba(255, 255, 255, 0.5);
+  display: block;
+  height: 90vmin;
+  margin: 5vmin;
+  width: 90vmin;
+  background-color: #f0c7af;
+  background-image:
+    radial-gradient(circle farthest-corner at center, transparent 50%, rgba(0,0,0,0.25)),
+    url("./Board/img/purty-wood.png");
+  background-size: contain;
+  box-shadow: 0 5px 5px black;
+}
+
+.painted {
+  fill-opacity: 0.4;
+}
+.painted > text {
+  font-family: "Rye", sans-serif;
+  fill: #000;
+  fill-opacity: 0.8;
+}
+.paintedRed {
+  composes: painted;
+  fill: #c62828;
+}
+.paintedBlue {
+  composes: painted;
+  fill: #1565c0;
+}
+.paintedYellow {
+  composes: painted;
+  fill: #ffab00;
+}
+.paintedGreen {
+  composes: painted;
+  fill: #388e3c;
+}
+
+.gridMajor {
+  stroke: #9e9e9e;
+}
+
+.gridMinor {
+  stroke: #bdbdbd;
+}
+
+.cell {
+  fill: url("#cellGradient");
+}
+
+.tokenRed {
+  fill: #c62828;
+}
+.tokenBlue {
+  fill: #1565c0;
+}
+.tokenYellow {
+  fill: #ffab00;
+}
+.tokenGreen {
+  fill: #388e3c;
+}
+
+.button {
+  fill: url("#buttonGradient");
+  stroke: #b71c1c;
+  stroke-width: 2;
+}
+.button > text {
+  font-family: "Rye", cursive;
+  fill: black;
+  stroke-width: 0;
+}

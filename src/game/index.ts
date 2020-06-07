@@ -1,15 +1,16 @@
 import { INVALID_MOVE, Stage } from "boardgame.io/core";
-import { Game, Ctx } from "boardgame.io";
+import { Game, Ctx as BaseCtx } from "boardgame.io";
+import { PluginPlayer } from 'boardgame.io/plugins';
 import _ from 'lodash';
 
 import { DiceValue } from "../constants";
 import * as board from "./board";
-export { BoardPositions } from './board';
+import {
+  Piece,
+  Seat,
+} from '../types';
 
-export interface IPiece {
-  seat: number,
-  position: string;
-}
+export { BoardPositions } from './board';
 
 export interface IPlayer {
   id: string;
@@ -19,10 +20,15 @@ export interface IPlayer {
 }
 
 export interface IG {
-  pieces: IPiece[];
+  pieces: Piece[];
   players: IPlayer[];
   dieRoll?: number;
 }
+
+export interface Ctx extends BaseCtx {
+  player?: any;
+}
+
 
 /**
  * Roll the die. If passed a number 1-6, use that as the value,
@@ -80,7 +86,7 @@ export interface IMove {
 /**
  * Get a list of valid moves from the current game state.
  */
-// export function getValidMoves(G: IG, ctx: Ctx): IPiece[] {
+// export function getValidMoves(G: IG, ctx: Ctx): Piece[] {
 export function getValidMoves(G: IG, ctx: Ctx): IMove[] {
   if (typeof G.dieRoll === "undefined") return [];
 
@@ -145,21 +151,52 @@ function movePiece(G: IG, ctx: Ctx, position: string): IG | string {
 /**
  * Choose the seat for a player.
  */
-function ChooseSeat(G: IG, ctx: Ctx, seat: number, name: string): string | undefined {
+function ChooseSeat(G: IG, ctx: Ctx, seat: Seat, name: string): string | undefined {
+  console.log("ChooseSeat", {
+    playerID: ctx.playerID,
+    seat,
+    name,
+  });
   if (G.players.some(p => p.seat === seat)) {
     return INVALID_MOVE;
+  }
+
+  if (typeof ctx.playerID !== "string") {
+    return INVALID_MOVE;
+  }
+
+  // First remove the player and pieces if they were previously placed.
+  const prev = G.players.find(p => p.id === ctx.playerID);
+  if (prev) {
+    G.players = G.players.filter(p => p.id !== prev.id);
+    G.pieces = G.pieces.filter(p => p.seat !== prev.seat);
   }
 
   const colors = ["red", "blue", "yellow", "green"];
   G.players.push({
     seat,
-    name,
-    id: ctx.playerID as string,
+    name: name,
+    id: ctx.playerID,
     color: colors[seat],
   })
-  G.pieces.push(...(_.range(4).map(i => ({seat, position: `S${seat}${i}`}))))
+  G.pieces.push(...([0, 1, 2, 3].map(i => ({id: i, seat, position: `S${seat}${i}`}))))
 }
 
+/**
+ * Change the name for a player.
+ */
+function ChangeName(G: IG, ctx: Ctx, name: string): string | undefined {
+  if (typeof ctx.playerID !== "string") {
+    return INVALID_MOVE;
+  }
+
+  const player = G.players.find(p => p.id === ctx.playerID);
+  if (!player) {
+    return INVALID_MOVE;
+  }
+
+  player.name = name;
+}
 
 const SeisGame: Game<IG> = {
   name: "seis",
@@ -170,7 +207,7 @@ const SeisGame: Game<IG> = {
       turn: {
         activePlayers: { all: Stage.NULL },
       },
-      moves: {ChooseSeat},
+      moves: {ChooseSeat, ChangeName},
       start: true,
       endIf: (G: IG, ctx: Ctx) => (G.players.length === ctx.numPlayers),
       next: 'play',
@@ -192,6 +229,18 @@ const SeisGame: Game<IG> = {
   moves: {
   },
   turn: {},
+  plugins: [
+    PluginPlayer({setup: (playerID) => ({}), }),
+  ],
+  endIf: (G: IG, ctx: Ctx): undefined|IPlayer  => {
+    return G.players.find(player => {
+      return G.pieces.filter(
+        piece => piece.seat === player.seat
+      ).every(
+        piece => piece.position[0] === 'H'
+      )
+    });
+  },
 };
 
 export default SeisGame;

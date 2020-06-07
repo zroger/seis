@@ -1,6 +1,8 @@
 import _ from 'lodash';
 import { INVALID_MOVE } from "boardgame.io/core";
 
+import { Piece } from '../types';
+
 enum BoardLocationType {
   CIRCUIT = "C",
   HOME = "H",
@@ -26,17 +28,12 @@ const Circuit = _.curry(encode)(BoardLocationType.CIRCUIT)
 const Start = _.curry(encode)(BoardLocationType.START)
 
 
-interface IPiece {
-  seat: number,
-  position: string,
-}
-
 /**
  * Calculate the next position (N+1) for a token with the given seat position.
  *
  * Returns INVALID_MOVE if the move would be invalid.
  */
-function calculateNextPosition(fromPos: string, activeSeat: number): string {
+export function calculateNextPosition(fromPos: string, activeSeat: number): string {
   const current = decode(fromPos);
 
   if (isStart(fromPos)) {
@@ -66,7 +63,7 @@ function calculateNextPosition(fromPos: string, activeSeat: number): string {
  *
  * Returns INVALID_MOVE if the move would be invalid.
  */
-export function calculateMove(fromPos: string, roll: number, pieces: IPiece[]): string {
+export function calculateMove(fromPos: string, roll: number, pieces: Piece[]): string {
   const piece = pieces.find(p => p.position === fromPos)
   if (typeof piece === "undefined") throw new Error("No piece in that position")
 
@@ -99,7 +96,7 @@ export function calculateMove(fromPos: string, roll: number, pieces: IPiece[]): 
 /**
  * Perform the given move, returning an updated list of pieces.
  */
-export function executeMove(fromPos: string, roll: number, pieces: IPiece[]): Record<string, string> {
+export function executeMove(fromPos: string, roll: number, pieces: Piece[]): Record<string, string> {
   const nextPos = calculateMove(fromPos, roll, pieces);
   if (nextPos === INVALID_MOVE) {
     throw new Error("invalid move")
@@ -117,7 +114,7 @@ export function executeMove(fromPos: string, roll: number, pieces: IPiece[]): Re
 /**
  * Find an unoccupied START location to return the captured piece to.
  */
-function findStartPosition(pieces: IPiece[], seat: number): string {
+function findStartPosition(pieces: Piece[], seat: number): string {
   const pos = _.first(
     _.difference(
       _.range(4).map(i => Start(seat, i)),
@@ -144,7 +141,7 @@ function isStart(position: string): boolean {
   return position[0].toUpperCase() === "S"
 }
 
-function isPassing(pieces: IPiece[], seat: number, nextPos: string): boolean {
+function isPassing(pieces: Piece[], seat: number, nextPos: string): boolean {
   return pieces.some(_.matches({position: nextPos, seat: seat}))
 }
 
