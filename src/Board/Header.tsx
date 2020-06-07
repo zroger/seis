@@ -14,7 +14,8 @@ const Header = (props: any) => {
     event.preventDefault();
     const user = getUser();
     const gameId =match?.params?.game_id as string;
-    await api.leaveRoom(gameId, user);
+    // Don't wait for this to finish.
+    api.leaveRoom(gameId, user).catch(error => console.error(error));
     history.push('/')
   }
 
