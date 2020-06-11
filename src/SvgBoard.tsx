@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import React, {useRef, useEffect} from 'react';
-import { motion, SVGMotionProps } from 'framer-motion';
+import { motion, MotionStyle, SVGMotionProps } from 'framer-motion';
 import classes from './SvgBoard.module.css';
 
 import { calculateNextPosition } from './game/board';
@@ -209,26 +209,64 @@ const Token = ({pos, seat, ...props}: TokenProps) => {
   ][seat];
 
   const animate = trail.length > 1 ? {
-    x: trail.map(p => Geo[p].x - tokenRadius),
-    y: trail.map(p => Geo[p].y - (tokenRadius * 2 - cellRadius)),
+    attrX: trail.map(p => Geo[p].x - tokenRadius),
+    attrY: trail.map(p => Geo[p].y - (tokenRadius * 2 - cellRadius)),
     transition: { duration: Math.max(1, trail.length / 2), ease: "easeOut" },
   } : {
-    x: Geo[pos].x - tokenRadius,
-    y: Geo[pos].y - (tokenRadius * 2 - cellRadius)
+    attrX: Geo[pos].x - tokenRadius,
+    attrY: Geo[pos].y - (tokenRadius * 2 - cellRadius)
   };
 
   return (
-    <motion.use
-      xlinkHref="#token"
+    <motion.svg
+      viewBox="-10 -10 20 20" x="0" y="0"
       height={tokenRadius * 2}
       width={tokenRadius * 2}
       animate={animate}
-      style={{x: Geo[pos].x - tokenRadius, y: Geo[pos].y - (tokenRadius * 2 - cellRadius)}}
+      initial={{
+        attrX: Geo[pos].x - tokenRadius,
+        attrY: Geo[pos].y - (tokenRadius * 2 - cellRadius),
+      } as MotionStyle}
       className={className}
-    />
+    >
+      <ellipse
+        fill="url(#shadowGradient1)"
+        cx="0"
+        cy="8"
+        rx="10"
+        ry="2"
+      />
+      <circle cx="0" cy="0" r="10" />
+      <circle fill="url(#tokenGradient1)" cx="0" cy="0" r="10" />
+    </motion.svg>
   )
 }
 
+interface PlayerProps {
+  seat: number,
+  name: string,
+}
+
+const Player: React.FC<PlayerProps> = ({seat, name}) => {
+  const transform = [
+    "rotate(45) translate(0 -195)",
+    "rotate(-45) translate(0 170)",
+    "rotate(45) translate(0 170)",
+    "rotate(-45) translate(0 -195)",
+  ][seat];
+
+  return (
+    <text x={0} y={15}
+      pointerEvents="none"
+      className={classes.player}
+      dominantBaseline="middle"
+      textAnchor="middle"
+      transform={transform}
+    >
+      {name}
+    </text>
+  )
+}
 
 interface Props {
   showGrid?: boolean;
@@ -259,9 +297,9 @@ const SvgBoard = ({
           <stop offset="100%" stopColor="#d32f2f" />
         </linearGradient>
 
-        <radialGradient id="cellGradient" fx="70%" fy="70%">
+        <radialGradient id="cellGradient" fx="30%" fy="70%">
           <stop offset="0%" stopColor="black" stopOpacity="0.25" />
-          <stop offset="80%" stopColor="black" stopOpacity="0.5" />
+          <stop offset="80%" stopColor="black" stopOpacity="0.4" />
         </radialGradient>
 
         <radialGradient id="boardGradient">
@@ -269,7 +307,7 @@ const SvgBoard = ({
           <stop offset="100%" stopColor="black" stopOpacity="0.25" />
         </radialGradient>
 
-        <radialGradient id="tokenGradient1" fx="30%" fy="30%">
+        <radialGradient id="tokenGradient1" fx="70%" fy="30%">
           <stop offset="0%" stopColor="#ffffff" stopOpacity="0.5" />
           <stop offset="80%" stopColor="#0a0a0a" stopOpacity="0.5" />
           <stop offset="100%" stopColor="#000000" stopOpacity="0.5" />
@@ -300,20 +338,6 @@ const SvgBoard = ({
           transform="rotate(0) translate(0 -105)" />
         <rect x={-60} y={-15} width={120} height={30} rx={15}
           transform="rotate(45) translate(0 -211)" />
-        <text x={0} y={15}
-          dominant-baseline="middle"
-          text-anchor="middle"
-          transform="rotate(45) translate(0 -195)">
-        </text>
-      </g>
-
-      <g className={classes.button} transform="translate(100 -80)">
-        <rect x={-30} y={-15} width={60} height={30} rx={5} />
-        <text x={0} y={5} fill="black"
-          dominant-baseline="middle"
-          text-anchor="middle">
-          Play!
-        </text>
       </g>
 
       <g pointerEvents="none" className={classes.paintedBlue}>
@@ -321,12 +345,6 @@ const SvgBoard = ({
           transform="rotate(135) translate(0 -211)" />
         <rect x={-15} y={-60} width={30} height={120} rx={15}
           transform="rotate(90) translate(0 -105)" />
-        <text x={0} y={15}
-          dominant-baseline="middle"
-          text-anchor="middle"
-          transform="rotate(-45) translate(0 170)">
-          Blue
-        </text>
       </g>
 
       <g pointerEvents="none" className={classes.paintedYellow}>
@@ -334,12 +352,6 @@ const SvgBoard = ({
           transform="rotate(225) translate(0 -211)" />
         <rect x={-15} y={-60} width={30} height={120} rx={15}
           transform="rotate(180) translate(0 -105)" />
-        <text x={0} y={15}
-          dominant-baseline="middle"
-          text-anchor="middle"
-          transform="rotate(45) translate(0 170)">
-          Yellow
-        </text>
       </g>
 
       <g pointerEvents="none" className={classes.paintedGreen}>
@@ -347,12 +359,6 @@ const SvgBoard = ({
           transform="rotate(315) translate(0 -211)" />
         <rect x={-15} y={-60} width={30} height={120} rx={15}
           transform="rotate(270) translate(0 -105)" />
-        <text x={0} y={15}
-          dominant-baseline="middle"
-          text-anchor="middle"
-          transform="rotate(-45) translate(0 -195)">
-          Green
-        </text>
       </g>
 
       <g>
@@ -366,6 +372,11 @@ const SvgBoard = ({
           />
         ))}
       </g>
+
+      <Player seat={0} name="Red" />
+      <Player seat={1} name="Blue" />
+      <Player seat={2} name="Yellow" />
+      <Player seat={3} name="Green" />
 
       <Token pos="S00" seat={0} />
       <Token pos="S01" seat={0} />
@@ -386,28 +397,6 @@ const SvgBoard = ({
       <Token pos="S31" seat={3} />
       <Token pos="S32" seat={3} />
       <Token pos="S33" seat={3} />
-
-      <svg width="20" height="20" x="-30" y="-10" viewBox="-10 -10 20 20">
-        <rect x="-10" y="-10" width="20" height="20" rx="2" fill="blue" />
-        <circle cx="0" cy="0" r="2" fill="white" />
-        <circle cx="-6" cy="-6" r="2" fill="white" />
-        <circle cx="6" cy="-6" r="2" fill="white" />
-        <circle cx="-6" cy="6" r="2" fill="white" />
-        <circle cx="6" cy="6" r="2" fill="white" />
-        <circle cx="0" cy="-6" r="2" fill="white" />
-        <circle cx="0" cy="6" r="2" fill="white" />
-      </svg>
-
-      <svg width="60" height="20" x="10" y="-10" viewBox="-30 -10 60 20">
-        <rect x="-30" y="-10" width="60" height="20" rx="2" fill="blue" />
-        <rect x="-30" y="-10" width="60" height="20" rx="2" fill="url('#boardGradient')" />
-        <text x={0} y={4}
-          dominantBaseline="middle"
-          textAnchor="middle"
-          fill="white"
-          style={{fontFamily: "Rye"}}
-        >ROLL</text>
-      </svg>
     </svg>
   )
 };

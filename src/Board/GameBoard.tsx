@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import React, { FunctionComponent, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 
 import {
@@ -10,7 +10,7 @@ import {
   BoardPositions,
 } from '../game';
 
-import DiceIcon from './DiceIcon';
+import Dice from './Dice';
 import Piece from './Piece';
 import classes from './board.module.css';
 
@@ -35,7 +35,21 @@ const seatClass = (seat?: number) => {
   return "";
 }
 
-const GameBoard: FunctionComponent<Props> = ({
+function usePrevious<T>(value: T): T|undefined {
+  // The ref object is a generic container whose current property is mutable ...
+  // ... and can hold any value, similar to an instance property on a class
+  const ref = useRef<T>();
+
+  // Store current value in ref
+  useEffect(() => {
+    ref.current = value;
+  }, [value]); // Only re-run if value changes
+
+  // Return previous value (happens before update in useEffect above)
+  return ref.current;
+}
+
+const GameBoard: React.FC<Props> = ({
   G,
   ctx,
   moves,
@@ -77,6 +91,15 @@ const GameBoard: FunctionComponent<Props> = ({
       moves.ChooseSeat(seat, meta?.name || `Player ${seat + 1}`);
     }
   };
+
+  const preG = usePrevious<IG>(G);
+  const moved = G.pieces.map(p => (
+    [p,  preG?.pieces.find(p2 => p.id === p2.id)]
+  )).filter(([p1, p2]) => (p1?.position !== p2?.position));
+  moved.map(([p1, p2]) => {
+    console.log(p1?.position, p2?.position)
+    return [p1, p2]
+  })
 
   return (
     <div className={classes.board}>
@@ -127,11 +150,13 @@ const GameBoard: FunctionComponent<Props> = ({
       ))}
 
       { G.dieRoll && (
-        <div
+        <Dice
           className={clsx(classes.diceView, seatClass(currentPlayer?.seat))}
-          style={{transform: `rotate(${((G.dieRoll + ctx.turn) % 18) * 10}deg)`}} >
-          <DiceIcon value={G.dieRoll} size={10} seat={currentPlayer?.seat as number} />
-        </div>
+          value={G.dieRoll}
+          color={['red', 'blue', 'yellow', 'green'][currentPlayer?.seat || 0]}
+          animate={true}
+          random={G.random}
+        />
       )}
     </div>
   );

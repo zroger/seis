@@ -23,6 +23,7 @@ export interface IG {
   pieces: Piece[];
   players: IPlayer[];
   dieRoll?: number;
+  random: number;
 }
 
 export interface Ctx extends BaseCtx {
@@ -35,12 +36,34 @@ export interface Ctx extends BaseCtx {
  * otherwise, use a random die roll.
  */
 function rollDie(G: IG, ctx: Ctx, value: DiceValue | undefined): IG | string {
+  const roll = value || ctx.random?.D6();
+  console.log("rollDie", {
+    playerID: ctx.playerID,
+    value: roll,
+  });
   if (typeof G.dieRoll !== "undefined") {
     return INVALID_MOVE;
   }
   return {
     ...G,
-    dieRoll: value || ctx.random?.D6(),
+    dieRoll: roll,
+  };
+}
+
+/**
+ * Pass to the next player, ending the turn.
+ */
+function Pass(G: IG, ctx: Ctx): IG {
+  console.log("Pass", {
+    playerID: ctx.playerID,
+  });
+  if (!ctx.events?.endTurn) {
+    throw new Error("ctx.events.endTurn is undefined");
+  }
+  ctx.events.endTurn();
+  return {
+    ...G,
+    dieRoll: undefined,
   };
 }
 
@@ -179,7 +202,11 @@ function ChooseSeat(G: IG, ctx: Ctx, seat: Seat, name: string): string | undefin
     id: ctx.playerID,
     color: colors[seat],
   })
-  G.pieces.push(...([0, 1, 2, 3].map(i => ({id: i, seat, position: `S${seat}${i}`}))))
+  G.pieces.push(...([0, 1, 2, 3].map(i => ({
+    id: seat * 4 + i,
+    seat,
+    position: `S${seat}${i}`,
+  }))))
 }
 
 /**
@@ -201,11 +228,14 @@ function ChangeName(G: IG, ctx: Ctx, name: string): string | undefined {
 const SeisGame: Game<IG> = {
   name: "seis",
   // setup: (): IG => INITIAL_STATE,
-  setup: () : IG => ({players: [], pieces: []}),
+  setup: () : IG => ({players: [], pieces: [], random: 0}),
   phases: {
     setup: {
       turn: {
         activePlayers: { all: Stage.NULL },
+        onMove: (G: IG, ctx: Ctx): IG => {
+          return {...G, random: ctx.random?.Number() as number}
+        },
       },
       moves: {ChooseSeat, ChangeName},
       start: true,
@@ -216,6 +246,7 @@ const SeisGame: Game<IG> = {
       moves: {
         rollDie,
         movePiece,
+        Pass,
       },
       turn: {
         order: {
@@ -223,12 +254,12 @@ const SeisGame: Game<IG> = {
           next: (G: IG, ctx: Ctx) => (ctx.playOrderPos + 1) % ctx.numPlayers,
           playOrder: (G: IG) => (_.sortBy(G.players, ['seat']).map(p => p.id)),
         },
+        onMove: (G: IG, ctx: Ctx): IG => {
+          return {...G, random: ctx.random?.Number() as number}
+        },
       },
     },
   },
-  moves: {
-  },
-  turn: {},
   plugins: [
     PluginPlayer({setup: (playerID) => ({}), }),
   ],

@@ -1,7 +1,7 @@
 .title {
   color: #ffcc80;
   font-family: Rye, cursive;
-  font-size: calc(var(--header-height) * 0.8);
+  font-size: 36px;
   margin-left: 16px;
 }
 .exit {

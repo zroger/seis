@@ -1,9 +1,8 @@
 .root {
   background: rgba(255, 255, 255, 0.5);
   display: block;
-  height: 90vmin;
-  margin: 5vmin;
-  width: 90vmin;
+  height: calc(var(--board-unit, 0.9vmin) * 100);
+  width: calc(var(--board-unit, 0.9vmin) * 100);
   background-color: #f0c7af;
   background-image:
     radial-gradient(circle farthest-corner at center, transparent 50%, rgba(0,0,0,0.25)),
@@ -15,6 +14,7 @@
 .painted {
   fill-opacity: 0.4;
 }
+.player,
 .painted > text {
   font-family: "Rye", sans-serif;
   fill: #000;

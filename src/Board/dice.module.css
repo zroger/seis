@@ -34,17 +34,29 @@
 .iconRandom {
   composes: icon;
 }
-.iconRandom:before {
-  top: 13%;
-  left: 13%;
-  right: 13%;
-  bottom: 13%;
-  border-radius: 100%;
-}
-.iconRandom:after {
-  top: 12%;
-  left: 12%;
-  right: 12%;
-  bottom: 12%;
-  border-radius: 100%;
+.iconRandom.seat-0 { background-color: #c62828; color: #fff }
+.iconRandom.seat-1 { background-color: #1565c0; color: #fff }
+.iconRandom.seat-2 { background-color: #ffab00; color: #fff }
+.iconRandom.seat-3 { background-color: #388e3c; color: #fff }
+
+/* .iconRandom { */
+/*   composes: icon; */
+/* } */
+/* .iconRandom:before { */
+/*   top: 13%; */
+/*   left: 13%; */
+/*   right: 13%; */
+/*   bottom: 13%; */
+/*   border-radius: 100%; */
+/* } */
+/* .iconRandom:after { */
+/*   top: 12%; */
+/*   left: 12%; */
+/*   right: 12%; */
+/*   bottom: 12%; */
+/*   border-radius: 100%; */
+/* } */
+
+.pip {
+  fill: url('#pipGradient');
 }

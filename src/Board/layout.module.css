@@ -1,77 +1,39 @@
 .container {
   --header-height: 60px;
-  --secondary-min-height: 200px;
-  --secondary-min-width: 300px;
-  --board-spacing: 0px;
+  --footer-height: 120px;
+  --board-unit: min(calc((var(--vh) * 100 - var(--header-height) - var(--footer-height)) / 100), var(--vw));
   display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  /* justify-content: space-between; */
   height: calc(var(--vh) * 100);
-  width: calc(var(--vw) * 100);
+  margin: 0 auto;
+  width: calc(var(--board-unit) * 100);
 }
-.header {
-  display: flex;
+@media (max-width: 420px) {
+  .container {
+    --footer-height: 150px;
+  }
+}
+
+.container > header,
+.container > main,
+.container > footer {
   align-items: center;
+  display: flex;
   justify-content: space-between;
+}
+.container > header {
   height: var(--header-height);
-  width: calc(var(--vw) * 100);
+  width: 100%;
+  z-index: 1;
 }
-
-.primary {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.container > footer {
+  height: var(--footer-height);
+  z-index: 1;
+  flex-grow: 1;
 }
-.secondary {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.board {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-@media (orientation: landscape) {
-  .container {
-    --secondary-width: max(var(--secondary-min-width), var(--vw) * 100 - var(--vh) * 100 + var(--header-height));
-    --board-unit: calc((var(--vw) * 100 - var(--secondary-width) - var(--board-spacing)) / 100);
-    flex-flow: row wrap;
-  }
-  .primary {
-    height: calc(var(--vh) * 100 - var(--header-height));
-    width: calc(var(--vw) * 100 - var(--secondary-width));
-  }
-  .board {
-    height: calc(var(--board-unit) * 100);
-    width: calc(var(--board-unit) * 100);
-  }
-  .secondary {
-    height: calc(var(--vh) * 100 - var(--header-height));
-    width: var(--secondary-width);
-  }
-}
-
-@media (orientation: portrait) {
-  .container {
-    --secondary-height: max(var(--secondary-min-height), var(--vh) * 100 - var(--vw) * 100 - var(--header-height));
-    --board-unit: calc((var(--vh) * 100 - var(--header-height) - var(--secondary-height) - var(--board-spacing)) / 100);
-    flex-flow: column nowrap;
-    align-items: center;
-  }
-  .header {
-    /* same as board width */
-    width: calc(var(--vh) * 100 - var(--header-height) - var(--secondary-height) - var(--board-spacing));
-  }
-  .primary {
-    height: calc(var(--vh) * 100 - var(--header-height) - var(--secondary-height));
-    width: calc(var(--vw) * 100);
-  }
-  .board {
-    height: calc(var(--board-unit) * 100);
-    width: calc(var(--board-unit) * 100);
-  }
-  .secondary {
-    height: var(--secondary-height);
-    width: calc(var(--vw) * 100);
-  }
+.container > main {
+  height: calc(var(--board-unit) * 100);
+  width: calc(var(--board-unit) * 100);
 }

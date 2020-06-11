@@ -5,25 +5,25 @@ import Controls from './Controls';
 import GameBoard from './GameBoard';
 import Header from './Header';
 import ViewPortUnits from '../components/ViewPortUnits';
-
+import NewBoard from '../components/Board';
 
 const Board = (props: any) => {
   return (
     <ViewPortUnits>
       <div className={classes.container}>
-        <header className={classes.header}>
+        <header>
           <Header />
         </header>
 
-        <section className={classes.primary}>
-          <div className={classes.board}>
-            <GameBoard {...props} />
-          </div>
-        </section>
+        <main>
+          { //<GameBoard {...props} />
+          }
+          <NewBoard {...props} />
+        </main>
 
-        <section className={classes.secondary}>
+        <footer>
           <Controls {...props} />
-        </section>
+        </footer>
       </div>
     </ViewPortUnits>
   );

@@ -27,7 +27,7 @@ const Piece: FunctionComponent<Props> = ({
   const onMouseLeave = () => { (onDeactivate || _.noop)(position); }
   return (
     <div
-      className={className + ' ' + classes[`${variant}_${index}`]}
+      className={className + ' ' + classes[`${variant}_${index % 4}`]}
       onClick={onClick}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
