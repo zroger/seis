@@ -1,5 +1,6 @@
 import React from 'react';
 import { DiceValue } from '@seis/core';
+import DiceIcon from '../DiceIcon';
 import classes from './Dice.module.css';
 import useGrid from '../Grid/useGrid';
 
@@ -27,10 +28,6 @@ const Dice: React.FC<Props> = ({
     '--rotate': `${Math.floor(360 + (360 * random))}deg`,
   } as React.CSSProperties;
 
-  const renderPip = (cx: number, cy: number) => {
-    return <circle className={classes.pip} cx={cx} cy={cy} r="2" />
-  }
-
   const className = grid.itemClass + " " + [
     classes.red,
     classes.blue,
@@ -40,15 +37,7 @@ const Dice: React.FC<Props> = ({
 
   return (
     <div className={className} style={style}>
-      <svg viewBox="-10 -10 20 20">
-        { [1, 3, 5].includes(value as number) && renderPip(0, 0) }
-        { [2, 3, 4, 5, 6].includes(value as number) && renderPip(-6, -6) }
-        { [4, 5, 6].includes(value as number) && renderPip(6, -6) }
-        { [4, 5, 6].includes(value as number) && renderPip(-6, 6) }
-        { [2, 3, 4, 5, 6].includes(value as number) && renderPip(6, 6) }
-        { [6].includes(value as number) && renderPip(0, -6) }
-        { [6].includes(value as number) && renderPip(0, 6) }
-      </svg>
+      <DiceIcon value={value} />
     </div>
   )
 };

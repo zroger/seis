@@ -1,8 +1,8 @@
 import React from 'react';
 
 import { DiceValue } from "../constants";
-import Button from './Button2';
-import DiceIcon from './DiceIcon2';
+import Button from '../Button';
+import DiceIcon from '../DiceIcon';
 
 interface Props extends React.HTMLAttributes<HTMLElement> {
   action?: (value: DiceValue) => void,
@@ -13,7 +13,7 @@ interface Props extends React.HTMLAttributes<HTMLElement> {
   random?: number,
 }
 
-const Dice: React.FC<Props> = ({
+const DiceButton: React.FC<Props> = ({
   action,
   value,
   color='default',
@@ -41,4 +41,4 @@ const Dice: React.FC<Props> = ({
   )
 };
 
-export default Dice;
+export default DiceButton;

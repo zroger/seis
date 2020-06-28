@@ -6,10 +6,10 @@ import {
   getCurrentPlayer,
 } from '@seis/core';
 
-import Button from './Button2';
-import Dice from './Dice';
+import Button from '../Button';
+import Dice from '../DiceButton';
 
-import classes from './controls.module.css';
+import classes from './GameControls.module.css';
 
 interface Props {
   G: IG,

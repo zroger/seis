@@ -7,7 +7,7 @@ import {
 
 import Home from './Home';
 import PlayOnline from './PlayOnline';
-import ViewPortUnits from './components/ViewPortUnits';
+import ViewPortUnits from './ViewPortUnits';
 
 import './App.css';
 

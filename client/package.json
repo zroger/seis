@@ -21,6 +21,8 @@
     "sha1": "^1.1.1"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^5.11.0",
+    "@testing-library/react": "^10.4.3",
     "react-scripts": "^3.4.1",
     "ts-loader": "^7.0.2",
     "tslint-react": "^5.0.0"

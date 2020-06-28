@@ -13,7 +13,7 @@ import {
 export { BoardPositions } from './board';
 
 export function uniqueId(len: number = 6): string {
-  const base = 16;
+  const base = 10;
   return _.range(len).map(() => (
     Math.floor(Math.random() * base).toString(base)
   )).join("")

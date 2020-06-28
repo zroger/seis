@@ -6,7 +6,7 @@
       transparent 50%,
       rgba(0,0,0,0.25)
     ),
-    url('../../Board/img/purty-wood.png');
+    url('./img/purty-wood.png');
   background-size: contain;
   box-shadow: 0 5px 5px black;
   height: calc(var(--board-unit, 0.9vw) * 100);

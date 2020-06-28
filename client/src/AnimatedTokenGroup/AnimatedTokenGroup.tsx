@@ -1,17 +1,16 @@
 import _ from 'lodash';
 import React, { useEffect, useReducer } from 'react';
 
-import { CellPosition } from '../positions';
-import { calculateNextPosition } from '@seis/core';
+import { calculateNextPosition, Piece } from '@seis/core';
+import { GridPosition } from '../Grid/positions';
 import Token from '../Token';
-import { Piece } from '@seis/core/src/types';
 
 interface Props {
   pieces: Piece[];
   action?: (pos: string) => void,
 }
 
-const buildTrail = (from: CellPosition, to: CellPosition, seat: number, max: number = 80): CellPosition[] => {
+const buildTrail = (from: GridPosition, to: GridPosition, seat: number, max: number = 80): GridPosition[] => {
   let i = 0;
   const trail = [from];
   while (trail[trail.length - 1] !== to && i++ < max) {
@@ -27,7 +26,7 @@ const buildTrail = (from: CellPosition, to: CellPosition, seat: number, max: num
   return trail;
 }
 
-const getNextPos = (current: CellPosition, final: CellPosition, seat: number): CellPosition => {
+const getNextPos = (current: GridPosition, final: GridPosition, seat: number): GridPosition => {
   const trail = buildTrail(current, final, seat);
   return trail.length > 1 ? trail[1] : final;
 }
@@ -35,7 +34,7 @@ const getNextPos = (current: CellPosition, final: CellPosition, seat: number): C
 interface State {
   i: number;
   current: Piece[];
-  targets: Record<Piece["id"], CellPosition>;
+  targets: Record<Piece["id"], GridPosition>;
 };
 
 interface ResetAction {
@@ -51,28 +50,6 @@ interface StepAction {
 type Action = ResetAction | StepAction;
 
 const reducer = (state: State, action: Action): State => {
-  /* const update = (current: Piece[], next: Piece[]): Piece[] => { */
-
-  /*   // A piece is active if it has moved into a non-start position. */
-  /*   const active = next.find(n => ( */
-  /*     current.find(p => p.id === n.id && p.position !== n.position && n.position[0] !== "S") */
-  /*   )); */
-  /*   // A piece is captures if it has moved into a start position. */
-  /*   const captured = next.find(n => ( */
-  /*     current.find(p => p.id === n.id && p.position !== n.position && n.position[0] !== "S") */
-  /*   )); */
-  /*   return current.map(p => { */
-  /*     if (active && p.id === active.id) { */
-  /*       return {...p, position: getNextPos(p.position, active.position, p.seat)}; */
-  /*     } */
-  /*     if (!active && captured && p.id === captured.id) { */
-  /*       return {...p, position: getNextPos(p.position, captured.position, p.seat)}; */
-  /*     } */
-  /*     return p; */
-  /*   }) */
-  /* } */
-
-  console.log(action.type, state.i);
   switch (action.type) {
     case 'reset':
       return {
@@ -126,7 +103,6 @@ const reducer = (state: State, action: Action): State => {
 
           // Advance the position by one.
           const next = getNextPos(p.position, target, p.seat)
-          console.log("moving piece", p.id, p.position, next);
           return {...p, position: next};
         }).map((p, i, pieces) => {
           // Process captures.
@@ -144,8 +120,6 @@ const reducer = (state: State, action: Action): State => {
           }
 
           // Not yet.
-          console.log("delaying capture", p.id, p.position);
-          console.log(pieces.map(x => [x.id, x.position]));
           return p;
         }),
       };
@@ -159,12 +133,7 @@ const AnimatedTokenGroup: React.FC<Props> = ({pieces, action}) => {
   const [state, dispatch] = useReducer(reducer, {i: 0, current: pieces, targets: {}});
 
   useEffect(() => {
-    console.log('useEffect');
     dispatch({type: 'reset', payload: pieces});
-    /* window.requestAnimationFrame((x: any) => { */
-    /*   console.log("requestAnimationFrame", x); */
-    /*   dispatch({type: 'step', payload: 'from useEffect'}); */
-    /* }); */
   }, [pieces]);
 
   const handleTransitionEnd = () => {

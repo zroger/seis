@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import React from 'react';
 
-import { Cells, CellPosition } from '../positions';
+import { positions, GridPosition } from '../Grid/positions';
 import classes from './Board.module.css';
 
 import useGrid from '../Grid/useGrid';
@@ -10,7 +10,7 @@ import useGrid from '../Grid/useGrid';
 const Board: React.FC = ({ children }) => {
   const grid = useGrid();
 
-  const renderCell = (position: CellPosition) => {
+  const renderCell = (position: GridPosition) => {
     return (
       <div
         className={grid.itemClass + " " + classes.cell}
@@ -19,7 +19,7 @@ const Board: React.FC = ({ children }) => {
     )
   }
 
-  const renderPaint = (pos1: CellPosition, pos2: CellPosition, className: string) => {
+  const renderPaint = (pos1: GridPosition, pos2: GridPosition, className: string) => {
     return <div
       className={grid.itemClass + " " + className}
       style={grid.getStyle([pos1, pos2], 13)}
@@ -41,7 +41,7 @@ const Board: React.FC = ({ children }) => {
       </div>
 
       <div className="cells">
-        { _.keys(Cells).map(renderCell) }
+        { _.keys(positions).map(renderCell) }
       </div>
 
       {children}

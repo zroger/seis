@@ -1,11 +1,11 @@
 import React from 'react';
 
-import { CellPosition } from '../positions';
+import { GridPosition } from '../Grid/positions';
 import classes from './Token.module.css';
 import useGrid from '../Grid/useGrid';
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
-  pos: CellPosition,
+  pos: GridPosition,
   seat: number,
   action?: (pos: string) => void,
 }

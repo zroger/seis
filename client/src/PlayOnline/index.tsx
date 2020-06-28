@@ -18,13 +18,13 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 
 import * as api from '../api';
 import { Game } from '@seis/core';
-import Board from '../Board';
-import Loading from '../components/Loading';
+import GameLayout from '../GameLayout';
+import Loading from '../Loading';
 import { getUser } from '../user';
 
 const OnlineClient = Client({
   game: Game,
-  board: Board,
+  board: GameLayout,
   multiplayer: SocketIO({ server: api.baseUrl }),
   loading: Loading,
 });
