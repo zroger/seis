@@ -35,16 +35,6 @@ const Dice: React.FC<Props> = ({
       action={action ? handleClick : undefined}
       disabled={disabled}
       color={color}
-      initial={ animate ? {
-        scale: 0,
-      } : false }
-      animate={ animate ? {
-        scale: [null, 1.5, 1],
-        rotate: [null, 360 * (1 + random) / 2, 360 * (1 + random)],
-        transition: {
-          ease: ["easeIn", "linear", "easeOut"],
-        },
-      } : undefined}
     >
       <DiceIcon value={value} />
     </Button>

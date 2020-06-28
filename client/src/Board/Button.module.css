@@ -17,12 +17,17 @@
   line-height: 37px;
   text-align: center;
   min-width: 40px;
+  transition: transform 200ms ease-in-out;
 }
 .button > svg {
   height: 100%;
   width: 100%;
   fill: var(--secondary, #fff);
 }
+.button:not(.disabled):hover {
+  transform: scale(1.5);
+}
+
 .disabled {
   cursor: not-allowed;
   opacity: 0.25;
