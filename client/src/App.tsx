@@ -7,7 +7,6 @@ import {
 
 import Home from './Home';
 import PlayOnline from './PlayOnline';
-import OfflineGame from './pages/OfflineGame';
 import ViewPortUnits from './components/ViewPortUnits';
 
 import './App.css';
@@ -19,10 +18,6 @@ const App: FunctionComponent = () => {
         <Switch>
           <Route exact path="/games/:game_id">
             <PlayOnline />
-          </Route>
-
-          <Route exact path="/offline">
-            <OfflineGame />
           </Route>
 
           <Route>
