@@ -5,30 +5,25 @@
   "private": true,
   "dependencies": {
     "@material-ui/core": "^4.9.12",
-    "@material-ui/icons": "^4.9.1",
-    "@material-ui/styles": "^4.9.10",
-    "@rehooks/window-size": "^1.0.2",
     "@seis/core": "1.0.0",
-    "@testing-library/jest-dom": "^4.2.4",
-    "@testing-library/react": "^9.5.0",
-    "@testing-library/user-event": "^7.2.1",
     "@types/invariant": "^2.2.32",
     "@types/lodash": "^4.14.150",
     "@types/react-router-dom": "^5.1.5",
     "@types/sha1": "^1.1.2",
     "boardgame.io": "^0.39.10",
     "clsx": "^1.1.0",
-    "gh-pages": "^2.2.0",
-    "invariant": "^2.2.4",
     "lodash": "^4.17.15",
     "react": "^16.13.1",
     "react-async": "^10.0.1",
     "react-dom": "^16.13.1",
     "react-icons": "^3.10.0",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "3.4.1",
-    "sha1": "^1.1.1",
-    "typescript": "^3.8.3"
+    "sha1": "^1.1.1"
+  },
+  "devDependencies": {
+    "react-scripts": "^3.4.1",
+    "ts-loader": "^7.0.2",
+    "tslint-react": "^5.0.0"
   },
   "scripts": {
     "predeploy": "npm run build",
@@ -51,9 +46,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "ts-loader": "^7.0.2",
-    "tslint-react": "^5.0.0"
   }
 }
