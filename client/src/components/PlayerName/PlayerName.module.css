@@ -1,0 +1,22 @@
+.root {
+  pointer-events: none;
+  font-size: calc(var(--board-unit) * 4);
+  font-family: Rye;
+}
+
+.red {
+  composes: root;
+  --translate: var(--height, 0);
+}
+.blue {
+  composes: root;
+  --translate: calc(var(--height, 0) * -1);
+}
+.yellow {
+  composes: root;
+  --translate: calc(var(--height, 0) * -1);
+}
+.green {
+  composes: root;
+  --translate: var(--height, 0);
+}

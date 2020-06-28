@@ -1,0 +1,17 @@
+{
+  "name": "@seis/core",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "license": "MIT",
+  "dependencies": {
+    "boardgame.io": "<0.39.14",
+    "lodash": "^4.17.15",
+    "typescript": "^3.9.5"
+  },
+  "devDependencies": {
+  },
+  "scripts": {
+    "test": "jest"
+  }
+}

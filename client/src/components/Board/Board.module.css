@@ -1,0 +1,45 @@
+.root {
+  background-color: #f0c7af;
+  background-image:
+    radial-gradient(
+      circle farthest-corner at center,
+      transparent 50%,
+      rgba(0,0,0,0.25)
+    ),
+    url('../../Board/img/purty-wood.png');
+  background-size: contain;
+  box-shadow: 0 5px 5px black;
+  height: calc(var(--board-unit, 0.9vw) * 100);
+  width: calc(var(--board-unit, 0.9vw) * 100);
+  position: relative;
+  overflow: hidden;
+}
+
+.cell {
+  background:
+    radial-gradient(
+      circle at 30% 70%,
+      rgba(0,0,0,0.25) 0%,
+      rgba(0,0,0,0.4) 80%
+    );
+  font-size: 10px;
+  line-height: calc(var(--board-unit) * 2 * var(--radius));
+  text-align: center;
+}
+
+.paint0 {
+  background-color: #c62828;
+  opacity: 0.4;
+}
+.paint1 {
+  background-color: #1565c0;
+  opacity: 0.4;
+}
+.paint2 {
+  background-color: #ffab00;
+  opacity: 0.4;
+}
+.paint3 {
+  background-color: #388e3c;
+  opacity: 0.4;
+}
