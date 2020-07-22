@@ -158,7 +158,10 @@ const OnlineGame = () => {
         <ErrorDialog />
       )}
       {state.isFulfilled && spectate && (
-        <OnlineClient debug={false} {...state.data} />
+        <OnlineClient
+          debug={false}
+          gameID={state.data.room.roomID}
+        />
       )}
       {state.isFulfilled && state.data.playerID && (
         <OnlineClient
