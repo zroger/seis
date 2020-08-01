@@ -4,9 +4,10 @@ body {
   height: calc(var(--vh) * 100);
   width: calc(var(--vw) * 100);
   overflow: hidden;
-  background:
-    url("/seis/skulls.png"),
-    no-repeat radial-gradient(ellipse farthest-corner at center, transparent 25%, rgba(0,0,0,0.5)),
-    url("/seis/skulls.png"),
-    #607d8b;
+  background: url("/seis/background.png");
+}
+
+#root {
+  height: 100%;
+  width: 100%;
 }

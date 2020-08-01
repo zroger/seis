@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { INVALID_MOVE } from "boardgame.io/core";
 
-import { Piece } from './types';
+import { BoardPosition, Piece } from './types';
 
 enum BoardLocationType {
   CIRCUIT = "C",
@@ -11,11 +11,11 @@ enum BoardLocationType {
 
 const NUM_SEATS = 4;
 
-function encode(type: BoardLocationType, seat: number, index: number): string {
-  return (type + seat.toString(16) + index.toString(16)).toUpperCase();
+function encode(type: BoardLocationType, seat: number, index: number) {
+  return (type + seat.toString(16) + index.toString(16)).toUpperCase() as BoardPosition;
 }
 
-function decode(position: string): {type: string, seat: number, index: number} {
+function decode(position: BoardPosition): {type: string, seat: number, index: number} {
   return {
     type: position[0],
     seat: parseInt(position[1], 16),
@@ -33,7 +33,7 @@ const Start = _.curry(encode)(BoardLocationType.START)
  *
  * Returns INVALID_MOVE if the move would be invalid.
  */
-export function calculateNextPosition(fromPos: string, activeSeat: number): string {
+export function calculateNextPosition(fromPos: BoardPosition, activeSeat: number): BoardPosition | "INVALID_MOVE" {
   const current = decode(fromPos);
 
   if (isStart(fromPos)) {
@@ -75,7 +75,7 @@ export function calculateMove(fromPos: string, roll: number, pieces: Piece[]): s
   let nextPos: string;
   try {
     nextPos = _.range(roll).reduce(
-      (acc: string, cur: any): string => {
+      (acc: BoardPosition, cur: any): string => {
         const next = calculateNextPosition(acc, piece.seat);
         if (next === INVALID_MOVE) throw INVALID_MOVE;
         if (isPassing(pieces, piece.seat, next)) throw INVALID_MOVE;
@@ -143,22 +143,4 @@ function isStart(position: string): boolean {
 
 function isPassing(pieces: Piece[], seat: number, nextPos: string): boolean {
   return pieces.some(_.matches({position: nextPos, seat: seat}))
-}
-
-/**
- * Return an Array of all positions on the board.
- */
-export function BoardPositions() {
-  return _.flatten(
-    _.range(NUM_SEATS).map(
-      seat => (
-        _.concat(
-          [],
-          _.range(4).map(i => Start(seat, i)),
-          _.range(12).map(i => Circuit(seat, i)),
-          _.range(4).map(i => Home(seat, i)),
-        )
-      )
-    )
-  );
 }

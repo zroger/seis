@@ -16,6 +16,10 @@
 }
 
 .cell {
+  height: 70%;
+  width: 70%;
+  border-radius: 50%;
+
   background:
     radial-gradient(
       circle at 30% 70%,
@@ -27,19 +31,75 @@
   text-align: center;
 }
 
-.paint0 {
+.red {
   background-color: #c62828;
   opacity: 0.4;
 }
-.paint1 {
+.blue {
   background-color: #1565c0;
   opacity: 0.4;
 }
-.paint2 {
+.yellow {
   background-color: #ffab00;
   opacity: 0.4;
 }
-.paint3 {
+.green {
   background-color: #388e3c;
   opacity: 0.4;
+}
+
+.start {
+  position: absolute;
+  width: 30%;
+  height: 7.5%;
+  margin-top: -3.75%;
+  margin-left: -15%;
+  border-radius: 12.5% / 50%;
+}
+.startRed {
+  composes: start red;
+  top: 12.5%;
+  left: 87.5%;
+  transform: rotate(45deg);
+}
+.startBlue {
+  composes: start blue;
+  top: 87.5%;
+  left: 87.5%;
+  transform: rotate(-45deg);
+}
+.startYellow {
+  composes: start yellow;
+  top: 87.5%;
+  left: 12.5%;
+  transform: rotate(45deg);
+}
+.startGreen {
+  composes: start green;
+  top: 12.5%;
+  left: 12.5%;
+  transform: rotate(-45deg);
+}
+
+.homeRed {
+  composes: start red;
+  top: 23.75%;
+  left: 50%;
+  transform: rotate(90deg);
+}
+.homeBlue {
+  composes: start blue;
+  top: 50%;
+  left: 76.25%;
+}
+.homeYellow {
+  composes: start yellow;
+  top: 76.25%;
+  left: 50%;
+  transform: rotate(90deg);
+}
+.homeGreen {
+  composes: start green;
+  top: 50%;
+  left: 23.75%;
 }

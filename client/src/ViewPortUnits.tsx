@@ -7,10 +7,7 @@
  * --vmin = Smaller of --vh or --vw
  * --vmax = Larger of --vh or --vw
  */
-import React, {
-  FunctionComponent,
-  useEffect,
-} from 'react';
+import React, { useEffect } from 'react';
 
 const handleResize = () => {
   const vh = window.innerHeight / 100;
@@ -21,7 +18,7 @@ const handleResize = () => {
   document.documentElement.style.setProperty('--vmax', `${Math.max(vh, vw)}px`);
 }
 
-const ViewPortUnits: FunctionComponent<{}> = ({ children }) => {
+const ViewPortUnits: React.FC = ({ children }) => {
   useEffect(() => {
     handleResize();
     window.addEventListener('resize', handleResize);

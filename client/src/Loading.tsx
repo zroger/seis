@@ -1,26 +1,38 @@
-import React, { FunctionComponent } from 'react';
+import styled, { keyframes } from 'styled-components';
 
-import Backdrop from '@material-ui/core/Backdrop';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import Paper from '@material-ui/core/Paper';
-import { makeStyles } from '@material-ui/core/styles';
+const rotate = keyframes`
+  0% {
+    border-top-color: #c62828;
+    transform: rotate(0deg);
+  }
+  25% {
+    border-top-color: #1565c0;
+    transform: rotate(360deg);
+  }
+  50% {
+    border-top-color: #ffab00;
+    transform: rotate(720deg);
+  }
+  75% {
+    border-top-color: #388e3c;
+    transform: rotate(1080deg);
+  }
+  100%; {
+    border-top-color: #c62828;
+    transform: rotate(1440deg);
+  }
+`
 
-const useStyles = makeStyles((theme) => ({
-  main: {},
-  loading: {
-    padding: theme.spacing(2),
-  },
-}));
-
-const Loading: FunctionComponent = () => {
-  const classes = useStyles();
-  return (
-    <Backdrop open={true}>
-      <Paper className={classes.loading}>
-        <CircularProgress color="inherit" />
-      </Paper>
-    </Backdrop>
-  )
-};
-
-export default Loading;
+const Spinner = styled.div`
+  position: absolute;
+  height: 64px;
+  width: 64px;
+  border-radius: 50%;
+  animation: ${rotate} 4s linear infinite;
+  animation-delay: 200ms;
+  box-sizing: border-box;
+  border-width: 8px;
+  border-style: solid;
+  border-color: transparent;
+`
+export default Spinner;

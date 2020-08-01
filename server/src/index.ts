@@ -2,7 +2,6 @@ import _ from 'lodash';
 import { Server } from 'boardgame.io/server';
 import Koa from 'koa';
 import cors from '@koa/cors';
-import sha1 from 'sha1';
 
 import { Game } from '@seis/core';
 import { uniqueId } from '@seis/core';
@@ -14,7 +13,6 @@ const server = Server(
     generateCredentials: (ctx: Koa.DefaultContext): string => {
       const creds = ctx.request.headers["bgio-credentials"];
       const clientId = ctx.request.body?.data?.clientId;
-
       console.log({
         playerID: ctx.request.body?.playerID,
         playerName: ctx.request.body?.playerName,
@@ -31,7 +29,7 @@ server.app.use(cors());
 server.run({
   port: parseInt(PORT, 10),
   callback: () => {
-    console.log(`Serving boardgame.io at: http://0.0.0.0:${PORT}/`); // tslint:disable-line
+    console.log(`Serving boardgame.io at: http://0.0.0.0:${PORT}/`);
   },
   lobbyConfig: {
     uuid: uniqueId,

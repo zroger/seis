@@ -1,10 +1,17 @@
 {
   "private": true,
-  "name": "seis",
-  "workspaces": ["client", "core", "server"],
+  "name": "@seis/monorepo",
+  "workspaces": [
+    "client",
+    "core",
+    "server"
+  ],
   "scripts": {
     "client": "yarn workspace @seis/client",
     "core": "yarn workspace @seis/core",
     "server": "yarn workspace @seis/server"
+  },
+  "devDependencies": {
+    "typescript": "^3.9.6"
   }
 }

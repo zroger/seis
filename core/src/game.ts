@@ -5,12 +5,11 @@ import _ from 'lodash';
 
 import * as board from "./board";
 import {
+  BoardPosition,
   DiceValue,
   Piece,
   Seat,
 } from './types';
-
-export { BoardPositions } from './board';
 
 export function uniqueId(len: number = 6): string {
   const base = 10;
@@ -197,7 +196,8 @@ function movePiece(G: IG, ctx: Ctx, position: string): IG | string {
 /**
  * Choose the seat for a player.
  */
-function ChooseSeat(G: IG, ctx: Ctx, seat: Seat, name: string): string | undefined {
+function ChooseSeat(G: IG, ctx: Ctx, seat: Seat, name?: string): string | undefined {
+  name = name || `Player ${seat +1}`;
   console.log("ChooseSeat", {
     playerID: ctx.playerID,
     seat,
@@ -228,8 +228,9 @@ function ChooseSeat(G: IG, ctx: Ctx, seat: Seat, name: string): string | undefin
   G.pieces.push(...([0, 1, 2, 3].map(i => ({
     id: seat * 4 + i,
     seat,
-    position: `S${seat}${i}`,
+    position: `S${seat}${i}` as BoardPosition,
   }))))
+  ctx.events.endTurn()
 }
 
 /**
@@ -294,6 +295,27 @@ const SeisGame: Game<IG> = {
         piece => piece.position[0] === 'H'
       )
     });
+  },
+  ai: {
+    enumerate: (G: IG, ctx: Ctx) => {
+      if (ctx.phase == 'setup') {
+        return [
+          {move: 'ChooseSeat', args: [2]}
+        ]
+      }
+      if (!G.dieRoll) {
+        return [{move: 'rollDie', args: []}]
+      }
+
+      const moves = getValidMoves(G, ctx);
+      if (moves.length === 0) {
+        return [{move: 'Pass', args: []}]
+      }
+
+      return moves.map(({from}) => (
+        {move: 'movePiece', args: [from]}
+      ));
+    },
   },
 };
 

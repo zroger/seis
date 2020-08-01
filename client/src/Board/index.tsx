@@ -4,7 +4,6 @@ import Board from './Board';
 import Dice from '../Dice';
 import PlayerName from '../PlayerName';
 import AnimatedTokenGroup from '../AnimatedTokenGroup';
-import GridProvider from '../Grid/GridProvider';
 
 import {
   Ctx,
@@ -34,22 +33,20 @@ const BoardController: React.FC<Props> = ({
 }) => {
   const currentPlayer = getCurrentPlayer(G, ctx);
   return (
-    <GridProvider>
-      <Board>
-        { G.players.map(p => (
-          <PlayerName key={p.seat} seat={p.seat} name={p.name} />
-        ))}
+    <Board>
+      { G.players.map(p => (
+        <PlayerName key={p.seat} seat={p.seat}>{p.name}</PlayerName>
+      ))}
 
-        <AnimatedTokenGroup
-          pieces={G.pieces}
-          action={isActive && G.dieRoll ? moves.movePiece : console.log}
-        />
+      <AnimatedTokenGroup
+        pieces={G.pieces}
+        action={isActive && G.dieRoll ? moves.movePiece : console.log}
+      />
 
-        { G.dieRoll && (
-          <Dice seat={currentPlayer?.seat as number} value={G.dieRoll as DiceValue} random={G.random} />
-        )}
-      </Board>
-    </GridProvider>
+      { G.dieRoll && (
+        <Dice seat={currentPlayer?.seat as number} value={G.dieRoll as DiceValue} random={G.random} />
+      )}
+    </Board>
   )
 }
 
