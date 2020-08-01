@@ -1,23 +1,27 @@
 {
   "files": {
-    "main.css": "/seis/static/css/main.1b6f2df1.chunk.css",
-    "main.js": "/seis/static/js/main.bc13c14c.chunk.js",
-    "main.js.map": "/seis/static/js/main.bc13c14c.chunk.js.map",
-    "runtime-main.js": "/seis/static/js/runtime-main.0d7279fb.js",
-    "runtime-main.js.map": "/seis/static/js/runtime-main.0d7279fb.js.map",
-    "static/js/2.0aadf89c.chunk.js": "/seis/static/js/2.0aadf89c.chunk.js",
-    "static/js/2.0aadf89c.chunk.js.map": "/seis/static/js/2.0aadf89c.chunk.js.map",
+    "main.css": "/seis/static/css/main.2200653f.chunk.css",
+    "main.js": "/seis/static/js/main.edc86fba.chunk.js",
+    "main.js.map": "/seis/static/js/main.edc86fba.chunk.js.map",
+    "runtime-main.js": "/seis/static/js/runtime-main.52e5d09a.js",
+    "runtime-main.js.map": "/seis/static/js/runtime-main.52e5d09a.js.map",
+    "static/css/2.7cc8e2aa.chunk.css": "/seis/static/css/2.7cc8e2aa.chunk.css",
+    "static/js/2.12179219.chunk.js": "/seis/static/js/2.12179219.chunk.js",
+    "static/js/2.12179219.chunk.js.map": "/seis/static/js/2.12179219.chunk.js.map",
     "index.html": "/seis/index.html",
-    "precache-manifest.9a21d284b46a943e1dbd57b4c36f836e.js": "/seis/precache-manifest.9a21d284b46a943e1dbd57b4c36f836e.js",
+    "precache-manifest.2a888a6b59c55673abb4f1c75426066c.js": "/seis/precache-manifest.2a888a6b59c55673abb4f1c75426066c.js",
     "service-worker.js": "/seis/service-worker.js",
-    "static/css/main.1b6f2df1.chunk.css.map": "/seis/static/css/main.1b6f2df1.chunk.css.map",
-    "static/js/2.0aadf89c.chunk.js.LICENSE.txt": "/seis/static/js/2.0aadf89c.chunk.js.LICENSE.txt",
-    "static/media/purty-wood.png": "/seis/static/media/purty-wood.658fa9bd.png"
+    "static/css/2.7cc8e2aa.chunk.css.map": "/seis/static/css/2.7cc8e2aa.chunk.css.map",
+    "static/css/main.2200653f.chunk.css.map": "/seis/static/css/main.2200653f.chunk.css.map",
+    "static/js/2.12179219.chunk.js.LICENSE.txt": "/seis/static/js/2.12179219.chunk.js.LICENSE.txt",
+    "static/media/index.css": "/seis/static/media/anton-latin-400.8be636df.woff",
+    "static/media/Board.module.css": "/seis/static/media/purty-wood.658fa9bd.png"
   },
   "entrypoints": [
-    "static/js/runtime-main.0d7279fb.js",
-    "static/js/2.0aadf89c.chunk.js",
-    "static/css/main.1b6f2df1.chunk.css",
-    "static/js/main.bc13c14c.chunk.js"
+    "static/js/runtime-main.52e5d09a.js",
+    "static/css/2.7cc8e2aa.chunk.css",
+    "static/js/2.12179219.chunk.js",
+    "static/css/main.2200653f.chunk.css",
+    "static/js/main.edc86fba.chunk.js"
   ]
 }
